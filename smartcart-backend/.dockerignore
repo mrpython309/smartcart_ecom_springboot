@@ -1,0 +1,10 @@
+target/
+*.class
+.mvn/
+.idea/
+.vscode/
+.git/
+*.log
+docker-compose.yml
+Dockerfile
+README.md
