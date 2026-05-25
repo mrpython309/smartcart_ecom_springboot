@@ -1,0 +1,52 @@
+# ===================================================================
+# SmartCart - Render Blueprint (Infrastructure as Code)
+# ===================================================================
+# This file defines all services for one-click deployment on Render.
+# Deploy via: https://render.com/deploy -> Connect your GitHub repo
+# ===================================================================
+
+services:
+  # -----------------------------------------------------------------
+  # Spring Boot Backend (Docker Web Service)
+  # -----------------------------------------------------------------
+  - type: web
+    name: smartcart-backend
+    runtime: docker
+    dockerfilePath: ./smartcart-backend/Dockerfile
+    dockerContext: ./smartcart-backend
+    region: oregon
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://dpg-d89vtse7r5hc73duf320-a/smartcart_db_8t9j
+      - key: SPRING_DATASOURCE_USERNAME
+        value: smartcart_db_8t9j_user
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: s7mnPjRab1k4o05crjBQaqxzIeHVxQrq
+      - key: JWT_SECRET
+        value: NGE2NzQ3M2QwNTk4YTJmZDJmZDAzNTEzM2QxYzRlOTc2OGEzNWVlMzEzYzBmNDQzODMxODdhNTUzODM1YmU1MQ==
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_SeWGYuZDDsn6Qb
+      - key: RAZORPAY_KEY_SECRET
+        value: Rv85bcUmy9WJYCDuBOrBcIk2
+      - key: ALLOWED_ORIGINS
+        value: https://smartcart-shop.onrender.com
+      - key: PORT
+        value: "8080"
+
+  # -----------------------------------------------------------------
+  # React Frontend (Static Site on Global CDN)
+  # -----------------------------------------------------------------
+  - type: web
+    name: smartcart-shop
+    runtime: static
+    buildCommand: cd smartcart-frontend && npm ci && npm run build
+    staticPublishPath: ./smartcart-frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://smartcart-backend.onrender.com/api
