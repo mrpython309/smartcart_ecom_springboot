@@ -43,6 +43,7 @@ Because your backend folder contains a production-grade multi-stage `Dockerfile`
 | `SPRING_DATASOURCE_URL` | *[Paste your Internal Database URL]* | Connects your backend to your Render PostgreSQL |
 | `SPRING_DATASOURCE_USERNAME` | `postgres` | Database Username |
 | `SPRING_DATASOURCE_PASSWORD` | *[Your Database Password]* | Found in your Render PostgreSQL settings |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | `update` | **(Highly recommended for first deploy)** Automatically creates tables in PostgreSQL |
 | `ALLOWED_ORIGINS` | `https://smartcart-shop.onrender.com` | *[Use your Frontend Static Site URL once deployed]* |
 | `JWT_SECRET` | *[Generate a 256-bit secure key]* | Security key for encrypting authentication tokens |
 | `RAZORPAY_KEY_ID` | `rzp_test_...` | Your Razorpay Merchant key id |

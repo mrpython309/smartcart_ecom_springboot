@@ -1,0 +1,61 @@
+# ===================================================================
+# SmartCart — Common Configuration
+# ===================================================================
+
+spring:
+  application:
+    name: SmartCart Backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # --- JPA / Hibernate ---
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # --- File Upload ---
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+# --- Server ---
+server:
+  port: ${PORT:8080}
+
+# --- Security & JWT ---
+app:
+  jwt:
+    secret: ${JWT_SECRET:NGE2NzQ3M2QwNTk4YTJmZDJmZDAzNTEzM2QxYzRlOTc2OGEzNWVlMzEzYzBmNDQzODMxODdhNTUzODM1YmU1MQ==}
+    expiration: ${JWT_EXPIRATION:86400000}
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000}
+  upload:
+    dir: uploads
+
+# --- Razorpay ---
+razorpay:
+  key:
+    id: ${RAZORPAY_KEY_ID:rzp_test_yourkeyhere}
+    secret: ${RAZORPAY_KEY_SECRET:yoursecrethere}
+
+# --- Actuator ---
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: SmartCart Backend
+    version: 1.0.0
+    description: Enterprise-Grade Full-Stack E-Commerce Platform

@@ -7,6 +7,8 @@ import com.smartcart.exception.ResourceNotFoundException;
 import com.smartcart.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,9 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "categories", key = "'all'")
     public List<CategoryDto> getAllCategories() {
+        log.info("Fetching all categories");
         return categoryRepository.findAll().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -36,6 +40,7 @@ public class CategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryDto createCategory(CategoryDto dto) {
         if (categoryRepository.existsByName(dto.getName())) {
             throw new BadRequestException("Category already exists: " + dto.getName());
@@ -48,11 +53,12 @@ public class CategoryService {
                 .build();
 
         category = categoryRepository.save(category);
-        log.info("Category created: {}", category.getName());
+        log.info("Category created: id={}, name='{}'", category.getId(), category.getName());
         return mapToDto(category);
     }
 
     @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryDto updateCategory(Long id, CategoryDto dto) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
@@ -62,11 +68,12 @@ public class CategoryService {
         if (dto.getImageUrl() != null) category.setImageUrl(dto.getImageUrl());
 
         category = categoryRepository.save(category);
-        log.info("Category updated: {}", category.getName());
+        log.info("Category updated: id={}, name='{}'", category.getId(), category.getName());
         return mapToDto(category);
     }
 
     @Transactional
+    @CacheEvict(value = "categories", allEntries = true)
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", id));
@@ -76,7 +83,7 @@ public class CategoryService {
         }
 
         categoryRepository.delete(category);
-        log.info("Category deleted: {}", id);
+        log.warn("Category deleted: id={}", id);
     }
 
     private CategoryDto mapToDto(Category category) {

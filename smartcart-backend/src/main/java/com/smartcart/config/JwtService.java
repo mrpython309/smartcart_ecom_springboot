@@ -68,7 +68,27 @@ public class JwtService {
     }
 
     private SecretKey getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        byte[] keyBytes;
+        try {
+            keyBytes = Decoders.BASE64.decode(secretKey);
+            if (keyBytes.length < 32) {
+                // If Base64 decoded key is too short, fallback to raw bytes
+                keyBytes = secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            }
+        } catch (IllegalArgumentException e) {
+            // Fallback if not valid Base64
+            keyBytes = secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        }
+
+        // Ensure key is at least 256 bits (32 bytes) for HS256
+        if (keyBytes.length < 32) {
+            try {
+                java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+                keyBytes = digest.digest(keyBytes);
+            } catch (java.security.NoSuchAlgorithmException ex) {
+                throw new IllegalStateException("SHA-256 algorithm not available", ex);
+            }
+        }
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

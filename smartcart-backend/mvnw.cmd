@@ -49,9 +49,22 @@ if not "%MAVEN_SKIP_RC%" == "true" (
   if exist "%HOME%\mavenrc.cmd" call "%HOME%\mavenrc.cmd" %*
 )
 
-@setlocal
+@setlocal EnableDelayedExpansion
+set "MAVEN_PROJECTBASEDIR=%~dp0."
+set "JVM_CONFIG_MAVEN_PROPS="
+if exist "%MAVEN_PROJECTBASEDIR%\.mvn\jvm.config" (
+  FOR /F "usebackq tokens=* delims=" %%A IN ("%MAVEN_PROJECTBASEDIR%\.mvn\jvm.config") DO (
+    set "JVM_CONFIG_MAVEN_PROPS=!JVM_CONFIG_MAVEN_PROPS! %%A"
+  )
+)
 
 set ERROR_CODE=0
+
+if not "%JAVA_HOME%" == "" (
+  set "JAVA_EXE=%JAVA_HOME%\bin\java.exe"
+) else (
+  set "JAVA_EXE=java"
+)
 
 @REM To isolate internal variables from possible wrapper scripts, we use a different variable name.
 set WRAPPER_JAR="%~dp0.mvn\wrapper\maven-wrapper.jar"
@@ -79,14 +92,14 @@ if exist %WRAPPER_JAR% (
 
     cls
     echo Downloading Maven Wrapper...
-    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object Net.WebClient).DownloadFile('%DOWNLOAD_URL%', '%WRAPPER_JAR%') }"
+    "%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; (New-Object Net.WebClient).DownloadFile('%DOWNLOAD_URL%', '%WRAPPER_JAR%') }"
     echo Download Complete.
 )
 
 @REM Provide a "standard" way to retrieve the CLI args
 set MAVEN_CMD_LINE_ARGS=%*
 
-%JAVA_EXE% %JVM_CONFIG_MAVEN_PROPS% %MAVEN_OPTS% %MAVEN_DEBUG_OPTS% -classpath %WRAPPER_JAR% %WRAPPER_LAUNCHER% %MAVEN_CMD_LINE_ARGS%
+"%JAVA_EXE%" %JVM_CONFIG_MAVEN_PROPS% %MAVEN_OPTS% %MAVEN_DEBUG_OPTS% -Dmaven.multiModuleProjectDirectory="%MAVEN_PROJECTBASEDIR%" -classpath %WRAPPER_JAR% %WRAPPER_LAUNCHER% %MAVEN_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 

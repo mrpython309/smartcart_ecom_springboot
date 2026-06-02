@@ -8,6 +8,8 @@ import com.smartcart.exception.ResourceNotFoundException;
 import com.smartcart.repository.CategoryRepository;
 import com.smartcart.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("ProductService Unit Tests")
 class ProductServiceTest {
 
     @Mock
@@ -39,6 +42,7 @@ class ProductServiceTest {
 
     private Product product;
     private Category category;
+    private ProductDto productDto;
 
     @BeforeEach
     void setUp() {
@@ -46,53 +50,129 @@ class ProductServiceTest {
         product = Product.builder()
                 .id(1L)
                 .name("Smartphone")
+                .description("Flagship smartphone")
                 .price(new BigDecimal("999.99"))
+                .discountPrice(new BigDecimal("899.99"))
+                .stock(50)
+                .brand("BrandX")
+                .rating(4.5)
+                .reviewCount(10)
                 .active(true)
                 .category(category)
                 .build();
+
+        productDto = ProductDto.builder()
+                .name("Smartphone")
+                .description("Flagship smartphone")
+                .price(new BigDecimal("999.99"))
+                .discountPrice(new BigDecimal("899.99"))
+                .stock(50)
+                .brand("BrandX")
+                .categoryId(1L)
+                .build();
     }
 
-    @Test
-    @SuppressWarnings("null")
-    void getAllProducts_ShouldReturnPagedResponse() {
-        Page<Product> productPage = new PageImpl<>(List.of(product));
-        when(productRepository.findByActiveTrue(any(Pageable.class))).thenReturn(productPage);
+    @Nested
+    @DisplayName("Get Products Tests")
+    class GetProductsTests {
 
-        PagedResponse<ProductDto> response = productService.getAllProducts(0, 10, "id", "asc");
+        @Test
+        @DisplayName("Should return all active products paged")
+        void getAllProducts_Success() {
+            Page<Product> productPage = new PageImpl<>(List.of(product));
+            when(productRepository.findByActiveTrue(any(Pageable.class))).thenReturn(productPage);
 
-        assertNotNull(response);
-        assertEquals(1, response.getContent().size());
-        assertEquals("Smartphone", response.getContent().get(0).getName());
-        verify(productRepository, times(1)).findByActiveTrue(any(Pageable.class));
+            PagedResponse<ProductDto> response = productService.getAllProducts(0, 10, "id", "asc");
+
+            assertNotNull(response);
+            assertEquals(1, response.getContent().size());
+            assertEquals("Smartphone", response.getContent().get(0).getName());
+            verify(productRepository).findByActiveTrue(any(Pageable.class));
+        }
+
+        @Test
+        @DisplayName("Should return product by ID successfully")
+        void getProductById_Success() {
+            when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+            ProductDto result = productService.getProductById(1L);
+
+            assertNotNull(result);
+            assertEquals("Smartphone", result.getName());
+            assertEquals(1L, result.getId());
+        }
+
+        @Test
+        @DisplayName("Should throw ResourceNotFoundException when product ID is invalid")
+        void getProductById_NotFound() {
+            when(productRepository.findById(2L)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class, () -> productService.getProductById(2L));
+        }
+
+        @Test
+        @DisplayName("Should return products paged by category successfully")
+        void getProductsByCategory_Success() {
+            Page<Product> productPage = new PageImpl<>(List.of(product));
+            when(productRepository.findByCategoryIdAndActiveTrue(eq(1L), any(Pageable.class))).thenReturn(productPage);
+
+            PagedResponse<ProductDto> response = productService.getProductsByCategory(1L, 0, 10);
+
+            assertNotNull(response);
+            assertEquals(1, response.getContent().size());
+            assertEquals("Smartphone", response.getContent().get(0).getName());
+        }
     }
 
-    @Test
-    void getProductById_WhenProductExists_ShouldReturnProductDto() {
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+    @Nested
+    @DisplayName("Create/Update/Delete Product Tests")
+    class ModifyProductTests {
 
-        ProductDto result = productService.getProductById(1L);
+        @Test
+        @DisplayName("Should successfully create a product")
+        void createProduct_Success() {
+            when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+            when(productRepository.save(any(Product.class))).thenReturn(product);
 
-        assertNotNull(result);
-        assertEquals("Smartphone", result.getName());
-    }
+            ProductDto result = productService.createProduct(productDto);
 
-    @Test
-    void getProductById_WhenProductDoesNotExist_ShouldThrowException() {
-        when(productRepository.findById(2L)).thenReturn(Optional.empty());
+            assertNotNull(result);
+            assertEquals("Smartphone", result.getName());
+            verify(productRepository).save(any(Product.class));
+        }
 
-        assertThrows(ResourceNotFoundException.class, () -> productService.getProductById(2L));
-    }
+        @Test
+        @DisplayName("Should throw ResourceNotFoundException during product creation when category not found")
+        void createProduct_CategoryNotFound() {
+            when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-    @Test
-    @SuppressWarnings("null")
-    void createProduct_ShouldSaveAndReturnProductDto() {
-        ProductDto inputDto = ProductDto.builder().name("New Product").categoryId(1L).price(new BigDecimal("100")).build();
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-        when(productRepository.save(any(Product.class))).thenReturn(product);
+            assertThrows(ResourceNotFoundException.class, () -> productService.createProduct(productDto));
+            verify(productRepository, never()).save(any(Product.class));
+        }
 
-        ProductDto result = productService.createProduct(inputDto);
+        @Test
+        @DisplayName("Should successfully update product details")
+        void updateProduct_Success() {
+            ProductDto updateDto = ProductDto.builder().name("Updated Smartphone").price(new BigDecimal("1099.99")).build();
+            when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+            when(productRepository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertNotNull(result);
-        verify(productRepository, times(1)).save(any(Product.class));
+            ProductDto result = productService.updateProduct(1L, updateDto);
+
+            assertNotNull(result);
+            assertEquals("Updated Smartphone", result.getName());
+            assertEquals(new BigDecimal("1099.99"), result.getPrice());
+        }
+
+        @Test
+        @DisplayName("Should successfully soft-delete a product")
+        void deleteProduct_Success() {
+            when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+
+            productService.deleteProduct(1L);
+
+            assertFalse(product.getActive());
+            verify(productRepository).save(product);
+        }
     }
 }

@@ -18,18 +18,27 @@ services:
     plan: free
     healthCheckPath: /actuator/health
     envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      # SmartCart is currently configured for MySQL in production.
+      # Provide a MySQL JDBC URL, for example:
+      # jdbc:mysql://host:3306/smartcart_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://dpg-d89vtse7r5hc73duf320-a/smartcart_db_8t9j
+        sync: false
       - key: SPRING_DATASOURCE_USERNAME
-        value: smartcart_db_8t9j_user
+        sync: false
       - key: SPRING_DATASOURCE_PASSWORD
-        value: s7mnPjRab1k4o05crjBQaqxzIeHVxQrq
+        sync: false
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        value: "6379"
       - key: JWT_SECRET
-        value: NGE2NzQ3M2QwNTk4YTJmZDJmZDAzNTEzM2QxYzRlOTc2OGEzNWVlMzEzYzBmNDQzODMxODdhNTUzODM1YmU1MQ==
+        sync: false
       - key: RAZORPAY_KEY_ID
-        value: rzp_test_SeWGYuZDDsn6Qb
+        sync: false
       - key: RAZORPAY_KEY_SECRET
-        value: Rv85bcUmy9WJYCDuBOrBcIk2
+        sync: false
       - key: ALLOWED_ORIGINS
         value: https://smartcart-shop.onrender.com
       - key: PORT

@@ -11,6 +11,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import java.util.UUID;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +21,9 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @Autowired
+    private Environment env;
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(ResourceNotFoundException ex) {
@@ -87,20 +93,28 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex) {
-        log.error("Unexpected error: ", ex);
-        
-        // Find the root cause message for more helpful error reporting
+        // Find the root cause message
         Throwable rootCause = ex;
         while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
             rootCause = rootCause.getCause();
         }
         
-        String detailedMessage = String.format("Internal Error [%s]: %s (Root cause: %s)", 
-                                              ex.getClass().getSimpleName(), 
-                                              ex.getMessage() != null ? ex.getMessage() : "No message provided",
-                                              rootCause.getMessage());
+        boolean isProd = java.util.Arrays.asList(env.getActiveProfiles()).contains("prod");
+        String message;
+
+        if (isProd) {
+            String errorId = UUID.randomUUID().toString();
+            log.error("Unexpected production error [ID: {}]: {}", errorId, ex.getMessage(), ex);
+            message = "An unexpected error occurred. Please contact support. Error ID: " + errorId;
+        } else {
+            log.error("Unexpected error: ", ex);
+            message = String.format("Internal Error [%s]: %s (Root cause: %s)", 
+                                                  ex.getClass().getSimpleName(), 
+                                                  ex.getMessage() != null ? ex.getMessage() : "No message provided",
+                                                  rootCause.getMessage());
+        }
                                               
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error(detailedMessage));
+                .body(ApiResponse.error(message));
     }
 }

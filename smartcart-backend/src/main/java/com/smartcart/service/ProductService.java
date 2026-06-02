@@ -9,6 +9,9 @@ import com.smartcart.repository.CategoryRepository;
 import com.smartcart.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,13 @@ import java.util.stream.Collectors;
 /**
  * ProductService manages the product lifecycle, including search, filtering,
  * and soft-deletion. Provides mapping between internal entities and DTOs.
+ *
+ * <p>Caching strategy:
+ * <ul>
+ *   <li>{@code products} — list-level cache keyed by pagination params.</li>
+ *   <li>{@code product-detail} — individual product cache keyed by ID.</li>
+ *   <li>Both caches are evicted on create, update, and delete operations.</li>
+ * </ul>
  */
 @Slf4j
 @Service
@@ -34,7 +44,9 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "'all_' + #page + '_' + #size + '_' + #sortBy + '_' + #sortDir")
     public PagedResponse<ProductDto> getAllProducts(int page, int size, String sortBy, String sortDir) {
+        log.info("Fetching products — page={}, size={}, sortBy={}, sortDir={}", page, size, sortBy, sortDir);
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -44,7 +56,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "product-detail", key = "#id")
     public ProductDto getProductById(Long id) {
+        log.info("Fetching product by id={}", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
         return mapToDto(product);
@@ -52,6 +66,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public PagedResponse<ProductDto> searchProducts(String query, int page, int size) {
+        log.info("Searching products — query='{}', page={}, size={}", query, page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> products = productRepository.searchProducts(query, pageable);
         return mapToPagedResponse(products);
@@ -61,6 +76,7 @@ public class ProductService {
     public PagedResponse<ProductDto> filterProducts(String query, Long categoryId,
                                                      BigDecimal minPrice, BigDecimal maxPrice,
                                                      int page, int size, String sortBy, String sortDir) {
+        log.info("Filtering products — category={}, minPrice={}, maxPrice={}", categoryId, minPrice, maxPrice);
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
@@ -70,13 +86,18 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "'category_' + #categoryId + '_' + #page + '_' + #size")
     public PagedResponse<ProductDto> getProductsByCategory(Long categoryId, int page, int size) {
+        log.info("Fetching products by category={}, page={}, size={}", categoryId, page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<Product> products = productRepository.findByCategoryIdAndActiveTrue(categoryId, pageable);
         return mapToPagedResponse(products);
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true)
+    })
     public ProductDto createProduct(ProductDto dto) {
         Category category = categoryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", dto.getCategoryId()));
@@ -96,11 +117,15 @@ public class ProductService {
                 .build();
 
         product = productRepository.save(product);
-        log.info("Product created: {}", product.getName());
+        log.info("Product created: id={}, name='{}'", product.getId(), product.getName());
         return mapToDto(product);
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "product-detail", key = "#id")
+    })
     public ProductDto updateProduct(Long id, ProductDto dto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
@@ -121,17 +146,21 @@ public class ProductService {
         if (dto.getActive() != null) product.setActive(dto.getActive());
 
         product = productRepository.save(product);
-        log.info("Product updated: {}", product.getName());
+        log.info("Product updated: id={}, name='{}'", product.getId(), product.getName());
         return mapToDto(product);
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "products", allEntries = true),
+            @CacheEvict(value = "product-detail", key = "#id")
+    })
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
         product.setActive(false);
         productRepository.save(product);
-        log.info("Product soft-deleted: {}", id);
+        log.warn("Product soft-deleted: id={}", id);
     }
 
     private ProductDto mapToDto(Product product) {

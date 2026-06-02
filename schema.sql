@@ -1,9 +1,13 @@
--- SmartCart Database Schema (PostgreSQL Version)
--- Provided for reference and manual schema initialization
+-- SmartCart Database Schema (MySQL Version)
+-- Optimized for production-grade MySQL deployments
+
+-- Create database if not exists (optional, usually handled by provisioning)
+-- CREATE DATABASE IF NOT EXISTS smartcart_db;
+-- USE smartcart_db;
 
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -12,12 +16,12 @@ CREATE TABLE IF NOT EXISTS users (
     avatar_url VARCHAR(500),
     role VARCHAR(20) NOT NULL DEFAULT 'USER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Addresses table
 CREATE TABLE IF NOT EXISTS addresses (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     street VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
     state VARCHAR(100) NOT NULL,
@@ -30,7 +34,7 @@ CREATE TABLE IF NOT EXISTS addresses (
 
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
     image_url VARCHAR(500),
@@ -39,7 +43,7 @@ CREATE TABLE IF NOT EXISTS categories (
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
@@ -52,23 +56,24 @@ CREATE TABLE IF NOT EXISTS products (
     active BOOLEAN DEFAULT TRUE,
     category_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    version BIGINT DEFAULT 0,
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_product_name ON products(name);
-CREATE INDEX IF NOT EXISTS idx_product_category ON products(category_id);
+CREATE INDEX idx_product_name ON products(name);
+CREATE INDEX idx_product_category ON products(category_id);
 
 -- Carts table
 CREATE TABLE IF NOT EXISTS carts (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL UNIQUE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Cart Items table
 CREATE TABLE IF NOT EXISTS cart_items (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     quantity INT NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
     cart_id BIGINT NOT NULL,
@@ -79,7 +84,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
 
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_number VARCHAR(50) NOT NULL UNIQUE,
     total_amount DECIMAL(10,2) NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
@@ -90,16 +95,17 @@ CREATE TABLE IF NOT EXISTS orders (
     shipping_country VARCHAR(100),
     user_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    cancelled_at TIMESTAMP NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_order_user ON orders(user_id);
-CREATE INDEX IF NOT EXISTS idx_order_status ON orders(status);
+CREATE INDEX idx_order_user ON orders(user_id);
+CREATE INDEX idx_order_status ON orders(status);
 
 -- Order Items table
 CREATE TABLE IF NOT EXISTS order_items (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     quantity INT NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
     product_name VARCHAR(255),
@@ -112,11 +118,14 @@ CREATE TABLE IF NOT EXISTS order_items (
 
 -- Payments table
 CREATE TABLE IF NOT EXISTS payments (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     amount DECIMAL(10,2) NOT NULL,
     method VARCHAR(30) NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     transaction_id VARCHAR(100) UNIQUE,
+    razorpay_order_id VARCHAR(100),
+    refund_id VARCHAR(100),
+    refund_status VARCHAR(50),
     order_id BIGINT NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
