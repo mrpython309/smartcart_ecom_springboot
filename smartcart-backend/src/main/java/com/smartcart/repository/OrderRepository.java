@@ -43,7 +43,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT new com.smartcart.dto.DailyRevenueDto(CAST(FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') AS String), SUM(o.totalAmount)) " +
            "FROM Order o WHERE o.createdAt >= :since AND o.status != 'CANCELLED' " +
-           "GROUP BY FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') " +
-           "ORDER BY FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') ASC")
+           "GROUP BY CAST(FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') AS String) " +
+           "ORDER BY CAST(FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') AS String) ASC")
     List<DailyRevenueDto> getDailyRevenueSince(LocalDateTime since);
 }
