@@ -5,7 +5,6 @@ import com.smartcart.dto.OrderDto;
 import com.smartcart.entity.*;
 import com.smartcart.enums.OrderStatus;
 import com.smartcart.enums.PaymentMethod;
-import com.smartcart.enums.PaymentStatus;
 import com.smartcart.exception.BadRequestException;
 import com.smartcart.exception.ResourceNotFoundException;
 import com.smartcart.repository.*;
