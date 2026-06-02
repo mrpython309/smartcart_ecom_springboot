@@ -6,7 +6,6 @@ import com.smartcart.entity.CartItem;
 import com.smartcart.entity.Product;
 import com.smartcart.entity.User;
 import com.smartcart.exception.BadRequestException;
-import com.smartcart.exception.ResourceNotFoundException;
 import com.smartcart.repository.CartItemRepository;
 import com.smartcart.repository.CartRepository;
 import com.smartcart.repository.ProductRepository;
