@@ -144,8 +144,7 @@ public class DataInitializer implements CommandLineRunner {
             BigDecimal price = minPrice.add(BigDecimal.valueOf(Math.random() * maxPrice.doubleValue())).setScale(2, java.math.RoundingMode.HALF_UP);
             BigDecimal discountPrice = price.multiply(BigDecimal.valueOf(0.85)).setScale(2, java.math.RoundingMode.HALF_UP); // 15% discount
             
-            // Generate a visually distinct random placeholder using seed
-            String imageUrl = "https://picsum.photos/seed/" + seedWord + i + "/500/500";
+            String imageUrl = null;
             if ("Tea Tree Anti-Acne Gel".equals(name)) {
                 imageUrl = "https://aromamagic.com/cdn/shop/products/SC102044-1.jpg?v=1746431342&width=600";
             } else if ("Hydrating Sheet Mask Pack".equals(name)) {
