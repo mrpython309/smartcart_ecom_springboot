@@ -148,6 +148,14 @@ public class DataInitializer implements CommandLineRunner {
             String imageUrl = "https://picsum.photos/seed/" + seedWord + i + "/500/500";
             if ("Tea Tree Anti-Acne Gel".equals(name)) {
                 imageUrl = "https://aromamagic.com/cdn/shop/products/SC102044-1.jpg?v=1746431342&width=600";
+            } else if ("Hydrating Sheet Mask Pack".equals(name)) {
+                imageUrl = "https://rukmini1.flixcart.com/image/1500/1500/xif0q/face-pack/q/y/p/25-solutions-sheet-mask-hydrating-with-hyaluronic-acid-sheet-original-imagzqsqwugp2wzk.jpeg?q=70";
+            } else if ("Rose Quartz Facial Roller".equals(name)) {
+                imageUrl = "https://suspire.in/cdn/shop/files/IMG_9095_1080x.jpg?v=1684673881";
+            } else if ("Volumizing Mascara".equals(name)) {
+                imageUrl = "https://www.lakmeindia.com/cdn/shop/files/29112_S2-8901030859073_1000x.jpg?v=1742202692";
+            } else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
             }
             
             Product newProduct = createProduct(
