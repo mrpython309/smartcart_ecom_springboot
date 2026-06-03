@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile({"dev", "prod"})
 @SuppressWarnings("null")
 public class DataInitializer implements CommandLineRunner {
 

@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile({"dev", "prod"})
 public class DataMigrationConfig {
 
     private final JdbcTemplate jdbcTemplate;
