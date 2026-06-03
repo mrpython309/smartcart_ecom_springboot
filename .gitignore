@@ -1,7 +1,52 @@
-node_modules/
-.env
+# ==========================
+# SmartCart — Git Ignore Rules
+# ==========================
+
+# --- Java / Maven ---
 target/
-build/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+logs/
+
+# --- Spring Boot ---
+*.pid
+
+# --- IDE ---
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+.factorypath
+
+# --- Node / Frontend ---
+node_modules/
 dist/
-powershell.bat
+build/
+.cache/
+
+# --- Environment ---
+.env
+.env.*
+!.env.example
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Docker ---
+*.log
+
+# --- Uploads ---
 uploads/
+
+# --- Misc ---
+powershell.bat

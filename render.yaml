@@ -20,21 +20,26 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      # SmartCart is currently configured for MySQL in production.
-      # Provide a MySQL JDBC URL, for example:
-      # jdbc:mysql://host:3306/smartcart_db?useSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      # Automatically wire PostgreSQL connection URL from the managed database
       - key: SPRING_DATASOURCE_URL
-        sync: false
-      - key: SPRING_DATASOURCE_USERNAME
-        sync: false
-      - key: SPRING_DATASOURCE_PASSWORD
-        sync: false
+        fromDatabase:
+          name: smartcart-db
+          property: connectionString
+      # Automatically wire Redis host and port from the managed Redis service
       - key: REDIS_HOST
-        sync: false
+        fromService:
+          type: redis
+          name: smartcart-cache
+          property: host
       - key: REDIS_PORT
-        value: "6379"
+        fromService:
+          type: redis
+          name: smartcart-cache
+          property: port
+      # Automatically generate a secure 64-character JWT secret on first build
       - key: JWT_SECRET
-        sync: false
+        generateValue: true
+      # Razorpay payment keys (to be provided in the Render UI during setup)
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
@@ -59,3 +64,19 @@ services:
     envVars:
       - key: VITE_API_BASE_URL
         value: https://smartcart-backend.onrender.com/api
+
+  # -----------------------------------------------------------------
+  # Redis Cache Instance
+  # -----------------------------------------------------------------
+  - type: redis
+    name: smartcart-cache
+    plan: free
+    region: oregon
+
+# -------------------------------------------------------------------
+# Managed PostgreSQL Database Instance
+# -------------------------------------------------------------------
+databases:
+  - name: smartcart-db
+    plan: free
+    region: oregon

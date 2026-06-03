@@ -1,10 +1,29 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Build artifacts (we rebuild inside Docker)
 target/
-*.class
-.mvn/
-.idea/
-.vscode/
-.git/
+
+# Documentation
+*.md
+RENDER_DEPLOYMENT.md
+
+# Local environment
+.env
+.env.*
+
+# Uploads (runtime data, not build input)
+uploads/
+
+# Tests (not needed in production image)
+src/test/
+
+# Logs
+logs/
 *.log
-docker-compose.yml
-Dockerfile
-README.md

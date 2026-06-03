@@ -4,15 +4,38 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="SmartCart — Premium E-Commerce Platform. Shop the latest electronics, fashion, home goods and more." />
+    <meta name="description" content="SmartCart — Premium E-Commerce Platform. Shop the latest electronics, fashion, home goods and more with secure payments and fast delivery." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="SmartCart Team" />
+    <meta name="theme-color" content="#6366f1" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="SmartCart — Premium E-Commerce" />
+    <meta property="og:description" content="Shop the latest electronics, fashion, home goods and more with secure payments and fast delivery." />
+    <meta property="og:site_name" content="SmartCart" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SmartCart — Premium E-Commerce" />
+    <meta name="twitter:description" content="Shop the latest electronics, fashion, home goods and more." />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <title>SmartCart — Premium E-Commerce</title>
   </head>
   <body>
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: system-ui, sans-serif;">
+        <h1>JavaScript Required</h1>
+        <p>SmartCart requires JavaScript to run. Please enable JavaScript in your browser settings.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js" defer></script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

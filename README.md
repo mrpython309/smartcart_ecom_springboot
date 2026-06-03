@@ -1,5 +1,7 @@
 # 🛒 SmartCart — Enterprise E-Commerce Platform
 
+[![CI/CD](https://github.com/YOUR_USERNAME/smartcart/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/smartcart/actions/workflows/ci.yml)
+
 A production-grade, high-performance e-commerce platform built using a modern decoupled architecture. The backend is powered by **Spring Boot**, **Spring Security + JWT**, and **MySQL**, utilizing **Redis** for sub-millisecond read caching, **Docker** for containerized orchestration, and comprehensive **JUnit 5 / Mockito** suites for robust test coverage.
 
 ---
@@ -7,14 +9,14 @@ A production-grade, high-performance e-commerce platform built using a modern de
 ## 🚀 Tech Stack
 
 ### ☕ Backend (Enterprise Java)
-*   **Java 17 + Spring Boot 3.2**
-*   **Spring Security & JWT Authentication** (Stateless, role-based RBAC)
+*   **Java 25 + Spring Boot 3.5**
+*   **Spring Security & JWT Authentication** (Stateless, role-based RBAC with rate limiting)
 *   **Spring Data JPA & Hibernate** (Optimistic locking, custom query indexing)
 *   **MySQL 8** (Primary transactional database)
 *   **Redis Caching** (Highly optimized for product catalog, search queries, and categories)
 *   **JUnit 5 & Mockito** (20+ unit test scenarios covering critical path business logic)
 *   **Spring Boot Actuator** (Production observability, metrics, health checks)
-*   **Swagger / OpenAPI 3.0** (Self-documenting interactive API Playground, grouped by modules)
+*   **Swagger / OpenAPI 3.0** (Self-documenting interactive API Playground, grouped by modules — dev only)
 
 ### ⚛️ Frontend (Client Application)
 *   **React 18 + Vite 5**
@@ -22,6 +24,19 @@ A production-grade, high-performance e-commerce platform built using a modern de
 *   **React Router 6**
 *   **Axios + Recharts** (Interactive administrative analytics)
 *   **React Hot Toast** (Micro-animations and state notifications)
+*   **Error Boundary** (Graceful crash recovery)
+
+### 🛡️ Security & Hardening
+*   **Rate Limiting** (10 req/min on auth endpoints per IP)
+*   **Security Headers** (HSTS, X-Frame-Options, X-Content-Type-Options, CSP, Referrer-Policy)
+*   **JWT Secret Validation** (App fails to start in prod if using default secret)
+*   **Profile Guards** (Debug endpoints, seed data, migrations disabled in production)
+
+### 🏗️ DevOps
+*   **Docker & Docker Compose** (Multi-stage builds, non-root containers, health checks)
+*   **GitHub Actions CI/CD** (Build, test, Docker image verification)
+*   **Nginx** (Reverse proxy with gzip, security headers, static asset caching)
+*   **Render Blueprint** (One-click cloud deployment)
 
 ---
 
@@ -31,8 +46,9 @@ A production-grade, high-performance e-commerce platform built using a modern de
 - ⚡ **Sub-Millisecond Redis Caching:** Optimized listing queries and detail retrievals with granular TTL policies.
 - 📈 **Real-Time Analytics Dashboard:** Administrative visualization of daily revenue and order trends.
 - 🛍 **E-Commerce Critical Paths:** Granular product filtering, real-time cart persistence, checkout address routing, and payment lifecycle callbacks.
-- 💳 **Mock Gateway / Auto-Refunds:** Payment integration handling order creation, verification signatures, and automatic rollback/refunds on cancellation.
+- 💳 **Razorpay Payment Gateway:** Payment integration with HMAC-SHA256 signature verification, automatic refunds on cancellation.
 - 📁 **Production Observability:** Built-in actuator endpoints for live application health monitoring.
+- 🛡️ **Production Security:** Rate limiting, security headers, JWT validation, profile-guarded dev tools.
 
 ---
 
@@ -42,6 +58,7 @@ A production-grade, high-performance e-commerce platform built using a modern de
 graph TD
     Client[React Frontend / Vite] -->|HTTPS / JSON| API[Spring Boot API]
     API -->|Auth| Security[Spring Security / JWT]
+    API -->|Rate Limit| RateLimit[Rate Limit Filter]
     API -->|1. Check Cache| Redis[(Redis Cache)]
     API -->|2. Database Query| DB[(MySQL Database)]
     API -->|Metrics & Health| Actuator[Spring Boot Actuator]
@@ -59,8 +76,8 @@ To minimize database load and ensure maximum throughput, SmartCart implements Sp
 ## ⚙️ Development & Quickstart
 
 ### 📋 Prerequisites
-*   **Java 17+**
-*   **Node.js 18+**
+*   **Java 25+**
+*   **Node.js 22+**
 *   **Docker & Docker Compose** (highly recommended)
 
 ### 🐳 1. Run Everything via Docker Compose (Recommended)
@@ -72,7 +89,9 @@ docker compose up --build
 *   **Backend REST API:** `http://localhost:8080`
 *   **Swagger UI (API Docs):** `http://localhost:8080/swagger-ui.html`
 
-### 🔑 Default Credentials
+### 🔑 Default Credentials (Dev Profile Only)
+
+> ⚠️ These credentials are **only created in the `dev` profile**. In production, no default users are seeded.
 
 | Role  | Email               | Password   |
 |-------|---------------------|------------|
@@ -88,11 +107,49 @@ SmartCart implements a professional test suite featuring Mockito mocking, bounda
 *   **ProductServiceTest:** Caching check logic, exception assertions for invalid IDs, paged response transformations.
 *   **CartServiceTest:** Inactive product blocks, stock boundary assertions, cart generation on demand.
 *   **OrderServiceTest:** Stock deduction, address validation, cancel status propagation and stock recovery.
+*   **ProductControllerIntegrationTest:** End-to-end API integration tests.
 
 Run the test suite using Maven:
 ```bash
 cd smartcart-backend
 mvn clean test
+```
+
+---
+
+## 🚢 Production Deployment Checklist
+
+### Required Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `SPRING_PROFILES_ACTIVE` | Must be `prod` | `prod` |
+| `SPRING_DATASOURCE_URL` | JDBC MySQL connection URL | `jdbc:mysql://host:3306/smartcart_db?useSSL=true` |
+| `SPRING_DATASOURCE_USERNAME` | Database username | `smartcart_user` |
+| `SPRING_DATASOURCE_PASSWORD` | Database password | `(secure password)` |
+| `REDIS_HOST` | Redis server hostname | `redis.example.com` |
+| `REDIS_PORT` | Redis port | `6379` |
+| `REDIS_PASSWORD` | Redis password (if auth enabled) | `(secure password)` |
+| `JWT_SECRET` | **Must be unique** — app will fail to start with the default | Generate: `openssl rand -base64 64` |
+| `RAZORPAY_KEY_ID` | Razorpay API key ID | `rzp_live_xxxxx` |
+| `RAZORPAY_KEY_SECRET` | Razorpay API key secret | `(from Razorpay dashboard)` |
+| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `https://yoursite.com` |
+
+### Security Checklist
+
+- [ ] Set a unique `JWT_SECRET` (app refuses to start with the default in prod)
+- [ ] Set production `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`
+- [ ] Configure `ALLOWED_ORIGINS` to only your frontend domain
+- [ ] Ensure the database is initialized with `schema.sql` before first startup
+- [ ] Verify `/actuator/health` returns `UP` without leaking internal details
+- [ ] Confirm Swagger UI is not accessible (`springdoc` is disabled in prod)
+- [ ] Confirm `/api/debug/*` endpoints are not accessible (guarded by `@Profile("dev")`)
+- [ ] Deploy behind HTTPS (Render provides this automatically)
+
+### Health Check Verification
+```bash
+# Should return {"status":"UP"} without internal details
+curl https://your-backend-url/actuator/health
 ```
 
 ---
@@ -110,4 +167,9 @@ Our endpoints are split into structural Swagger groups:
 | **3. Cart** | `/api/cart` | `GET` | User | Fetch user's cart state. |
 | **3. Cart** | `/api/cart/add` | `POST` | User | Add products to cart. |
 | **4. Orders** | `/api/orders` | `POST` | User | Place order and reserve stock. |
+| **5. Payments** | `/api/payments/create-order` | `POST` | User | Create Razorpay payment order. |
+| **5. Payments** | `/api/payments/verify` | `POST` | User | Verify payment and confirm order. |
 | **6. Admin** | `/api/admin/dashboard` | `GET` | Admin | Multi-dimensional financial analytics. |
+
+> 💡 **Rate Limiting:** Auth endpoints (`/api/auth/**`) are rate-limited to 10 requests per minute per IP address.
+

@@ -29,6 +29,7 @@ import com.smartcart.repository.UserRepository;
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final RateLimitFilter rateLimitFilter;
     private final UserRepository userRepository;
 
     @Bean
@@ -68,6 +69,7 @@ public class SecurityConfig {
                 )
             )
             .authenticationProvider(authenticationProvider)
+            .addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -10,6 +10,7 @@ import com.smartcart.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@Profile("dev")
 @SuppressWarnings("null")
 public class DataInitializer implements CommandLineRunner {
 
