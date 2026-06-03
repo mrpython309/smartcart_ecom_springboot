@@ -24,15 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * ProductService manages the product lifecycle, including search, filtering,
- * and soft-deletion. Provides mapping between internal entities and DTOs.
- *
- * <p>Caching strategy:
- * <ul>
- *   <li>{@code products} — list-level cache keyed by pagination params.</li>
- *   <li>{@code product-detail} — individual product cache keyed by ID.</li>
- *   <li>Both caches are evicted on create, update, and delete operations.</li>
- * </ul>
+ * ProductService manages the product lifecycle.
  */
 @Slf4j
 @Service

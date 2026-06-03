@@ -23,16 +23,6 @@ import java.util.Map;
 
 /**
  * Redis cache configuration for SmartCart.
- *
- * <p>Cache strategy:
- * <ul>
- *   <li><b>products</b>       — cached for 10 minutes; evicted on create/update/delete.</li>
- *   <li><b>product-detail</b> — cached for 15 minutes per product ID.</li>
- *   <li><b>categories</b>     — cached for 30 minutes (rarely changes).</li>
- * </ul>
- *
- * <p>Cache invalidation is handled via {@code @CacheEvict} in service methods that
- * mutate data, ensuring stale reads are avoided.
  */
 @Slf4j
 @Configuration

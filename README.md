@@ -1,244 +1,51 @@
-# 🛒 SmartCart — Enterprise E-Commerce Platform
+# SmartCart — E-Commerce Application
 
-[![CI/CD](https://github.com/YOUR_USERNAME/smartcart/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/smartcart/actions/workflows/ci.yml)
+SmartCart is a full-stack e-commerce application. It includes a Spring Boot backend and a React (Vite) frontend.
 
-A production-grade, high-performance e-commerce platform built using a modern decoupled architecture. The backend is powered by **Spring Boot**, **Spring Security + JWT**, and **MySQL/PostgreSQL**, utilizing **Redis** for sub-millisecond read caching, **Docker** for containerized orchestration, and comprehensive **JUnit 5 / Mockito** suites for robust test coverage.
+## Technologies
+* **Backend:** Spring Boot, Spring Security (JWT), Spring Data JPA, Hibernate, MySQL, Redis
+* **Frontend:** React, Vite, Tailwind CSS, Axios, React Router
 
----
+## Project Structure
+* `smartcart-backend/`: The backend REST API codebase.
+* `smartcart-frontend/`: The frontend client codebase.
 
-## 🚀 Tech Stack
+## Getting Started
 
-### ☕ Backend (Enterprise Java)
-*   **Java 25 + Spring Boot 3.5**
-*   **Spring Security & JWT Authentication** (Stateless, role-based RBAC with rate limiting)
-*   **Spring Data JPA & Hibernate** (Optimistic locking, custom query indexing)
-*   **MySQL 8 / PostgreSQL** (Primary transactional database)
-*   **Redis Caching** (Highly optimized for product catalog, search queries, and categories)
-*   **JUnit 5 & Mockito** (20+ unit test scenarios covering critical path business logic)
-*   **Spring Boot Actuator** (Production observability, metrics, health checks)
-*   **Swagger / OpenAPI 3.0** (Self-documenting interactive API Playground, grouped by modules — dev only)
+### Database Setup
+1. Make sure MySQL is running locally on port `3306`.
+2. Create the database for the application:
+   ```sql
+   CREATE DATABASE smartcart_db;
+   ```
+3. The default application development configuration expects database username `root` and password `admin`. If your local setup is different, update the values in `smartcart-backend/src/main/resources/application-dev.yml`.
 
-### ⚛️ Frontend (Client Application)
-*   **React 18 + Vite 8**
-*   **Tailwind CSS 3.4**
-*   **React Router 6**
-*   **Axios + Recharts** (Interactive administrative analytics)
-*   **React Hot Toast** (Micro-animations and state notifications)
-*   **Error Boundary** (Graceful crash recovery)
+### Caching (Optional)
+This project uses Redis for caching product catalog and categories. By default, it expects Redis running on `localhost:6379`. 
+* If Redis is not running, the application will fallback to database queries (warnings will be logged).
 
-### 🛡️ Security & Hardening
-*   **Rate Limiting** (10 req/min on auth endpoints per IP)
-*   **Security Headers** (HSTS, X-Frame-Options, X-Content-Type-Options, CSP, Referrer-Policy)
-*   **JWT Secret Validation** (App fails to start in prod if using default secret)
-*   **Profile Guards** (Debug endpoints, seed data, migrations disabled in production)
-
-### 🏗️ DevOps
-*   **Docker & Docker Compose** (Multi-stage builds, non-root containers, health checks)
-*   **GitHub Actions CI/CD** (Build, test, Docker image verification)
-*   **Nginx** (Reverse proxy with gzip, security headers, static asset caching)
-*   **Render Blueprint** (One-click cloud deployment)
-
----
-
-## 📦 Features
-
-- 🔐 **Stateless JWT Security:** RBAC with custom `UserDetailsService`, secure BCrypt password encoding.
-- ⚡ **Sub-Millisecond Redis Caching:** Optimized listing queries and detail retrievals with granular TTL policies.
-- 📈 **Real-Time Analytics Dashboard:** Administrative visualization of daily revenue and order trends.
-- 🛍 **E-Commerce Critical Paths:** Granular product filtering, real-time cart persistence, checkout address routing, and payment lifecycle callbacks.
-- 💳 **Razorpay Payment Gateway:** Payment integration with HMAC-SHA256 signature verification, automatic refunds on cancellation.
-- 📁 **Production Observability:** Built-in actuator endpoints for live application health monitoring.
-- 🛡️ **Production Security:** Rate limiting, security headers, JWT validation, profile-guarded dev tools.
-- 📱 **Responsive Design:** Fully responsive layout optimized for mobile and desktop displays.
-
----
-
-## 🏗 System & Caching Architecture
-
-```mermaid
-graph TD
-    Client[React Frontend / Vite] -->|HTTPS / JSON| API[Spring Boot API]
-    API -->|Auth| Security[Spring Security / JWT]
-    API -->|Rate Limit| RateLimit[Rate Limit Filter]
-    API -->|1. Check Cache| Redis[(Redis Cache)]
-    API -->|2. Database Query| DB[(MySQL/PostgreSQL Database)]
-    API -->|Metrics & Health| Actuator[Spring Boot Actuator]
-    API -->|Interactive Docs| Swagger[OpenAPI / Swagger UI]
-```
-
-### ⚡ Caching Strategy (Redis)
-To minimize database load and ensure maximum throughput, SmartCart implements Spring's `@Cacheable` abstraction backed by **Redis**:
-1.  **Product Lists (`products`):** Cached for 10 minutes (TTL). Automatically invalidated (`@CacheEvict`) upon administrative creation, modification, or soft-deletion of products.
-2.  **Product Details (`product-detail`):** Cached for 15 minutes by unique ID. Invalidated immediately when that specific product is updated or deleted.
-3.  **Categories (`categories`):** Cached for 30 minutes. Invalidated on category updates.
-
-### 💎 Technical Rigor
-This project demonstrates several high-level engineering standards:
-- **Clean Architecture:** Strict separation of DTOs, Controllers, Services, and Repositories.
-- **Security First:** Stateless JWT authentication with secure password hashing and Role-Based Access Control (RBAC).
-- **Automated Testing:** Unit tests for business logic and Integration tests for API endpoints.
-- **Observability:** Built-in health checks and system metrics via Actuator endpoints.
-- **Optimized DevOps:** Dockerized environment with multi-stage builds and automated database readiness synchronization.
-
----
-
-## ⚙️ Development & Quickstart
-
-### 📋 Prerequisites
-*   **Java 25+**
-*   **Node.js 22+**
-*   **Docker & Docker Compose** (highly recommended)
-
-### 🐳 1. Run Everything via Docker Compose (Recommended)
-You can start the entire application—including the MySQL database, Redis instance, backend, and frontend—with a single command:
-```bash
-docker compose up --build
-```
-*   **Frontend:** `http://localhost:3000`
-*   **Backend REST API:** `http://localhost:8080`
-*   **Swagger UI (API Docs):** `http://localhost:8080/swagger-ui.html`
-
-### 💻 2. Run Locally Without Docker
-If you want to run the components directly on your host machine:
-
-#### Database Setup
-Create a database named `smartcart_db` on port `3306` (or configure your database parameters):
-```sql
-CREATE DATABASE IF NOT EXISTS smartcart_db;
-```
-
-#### Backend Setup
-Navigate to the backend directory and run:
+### Running the Backend
+Navigate to the backend folder and run Spring Boot using Maven:
 ```bash
 cd smartcart-backend
 ./mvnw spring-boot:run
 ```
-Backend will start at **http://localhost:8080**  
-Swagger API Docs: **http://localhost:8080/swagger-ui.html**
+The backend server starts on `http://localhost:8080`.
+The Swagger API documentation is available at `http://localhost:8080/swagger-ui.html` when running in the development profile.
 
-#### Frontend Setup
-Navigate to the frontend directory, install dependencies, and run:
+### Running the Frontend
+Navigate to the frontend folder, install dependencies, and start the development server:
 ```bash
 cd smartcart-frontend
 npm install
 npm run dev
 ```
-Frontend will start at **http://localhost:5173**
+The frontend application runs on `http://localhost:5173`.
 
-### 🚀 Easy Start Scripts (Windows)
-For convenience, scripts are provided at the project root:
-1.  **`start-app.bat`**: Runs the entire application (DB + Backend + Frontend) using **Docker Compose**. Recommended for a consistent environment.
-2.  **`run-locally.bat`**: Runs the Backend (Maven) and Frontend (NPM) in parallel windows on your host machine.
-
-### 🔑 Default Credentials (Dev Profile Only)
-
-> ⚠️ These credentials are **only created in the `dev` and `prod` seed environments**. In production, ensure these are secured.
-
-| Role  | Email                 | Password   |
-|-------|-----------------------|------------|
-| Admin | `admin@smartcart.com` | `Admin@123`  |
-| User  | `john@example.com`    | `User@123`   |
-
----
-
-## 🧪 Testing Suite (JUnit 5 + Mockito)
-
-SmartCart implements a professional test suite featuring Mockito mocking, boundary verification, and custom exception asserting:
-*   **AuthServiceTest:** Registration validation, duplicate email assertions, password encoding checks, login state verification.
-*   **ProductServiceTest:** Caching check logic, exception assertions for invalid IDs, paged response transformations.
-*   **CartServiceTest:** Inactive product blocks, stock boundary assertions, cart generation on demand.
-*   **OrderServiceTest:** Stock deduction, address validation, cancel status propagation and stock recovery.
-*   **ProductControllerIntegrationTest:** End-to-end API integration tests.
-
-Run the test suite using Maven:
+### Running via Docker Compose
+If you have Docker Desktop running, you can run the entire system (including MySQL and Redis services) in containers:
 ```bash
-cd smartcart-backend
-mvn clean test
+docker compose up --build
 ```
-
----
-
-## 📁 Project Structure
-
-```
-smartcart-backend/
-├── src/main/java/com/smartcart/
-│   ├── config/          # Security, JWT, CORS, Swagger config
-│   ├── controller/      # REST API controllers
-│   ├── dto/             # Data Transfer Objects
-│   ├── entity/          # JPA entities
-│   ├── enums/           # Role, OrderStatus, PaymentStatus
-│   ├── exception/       # Global exception handling
-│   ├── repository/      # Spring Data JPA repositories
-│   └── service/         # Business logic services
-└── src/main/resources/
-    └── application.yml  # Main configurations & profiles
-
-smartcart-frontend/
-├── src/
-│   ├── api/             # Axios config + API service modules
-│   ├── components/      # Header, Footer, ProductCard, Shared
-│   ├── context/         # AuthContext, CartContext
-│   └── pages/           # All page components
-│       └── admin/       # Admin panel pages
-├── index.html
-├── tailwind.config.js
-└── vite.config.js
-```
-
----
-
-## 🚢 Production Deployment Checklist
-
-### Required Environment Variables
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `SPRING_PROFILES_ACTIVE` | Must be `prod` | `prod` |
-| `SPRING_DATASOURCE_URL` | JDBC PostgreSQL connection URL | `jdbc:postgresql://host:5432/smartcart_db?sslmode=require` |
-| `SPRING_DATASOURCE_USERNAME` | Database username | `postgres` |
-| `SPRING_DATASOURCE_PASSWORD` | Database password | `(secure password)` |
-| `REDIS_HOST` | Redis server hostname | `redis.example.com` |
-| `REDIS_PORT` | Redis port | `6379` |
-| `REDIS_PASSWORD` | Redis password (if auth enabled) | `(secure password)` |
-| `JWT_SECRET` | **Must be unique** — app will fail to start with the default | Generate: `openssl rand -base64 64` |
-| `RAZORPAY_KEY_ID` | Razorpay API key ID | `rzp_live_xxxxx` |
-| `RAZORPAY_KEY_SECRET` | Razorpay API key secret | `(from Razorpay dashboard)` |
-| `ALLOWED_ORIGINS` | Comma-separated list of allowed CORS origins | `https://yoursite.com` |
-
-### Security Checklist
-
-- [ ] Set a unique `JWT_SECRET` (app refuses to start with the default in prod)
-- [ ] Set production `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`
-- [ ] Configure `ALLOWED_ORIGINS` to only your frontend domain
-- [ ] Verify `/actuator/health` returns `UP` without leaking internal details
-- [ ] Confirm Swagger UI is not accessible (`springdoc` is disabled in prod)
-- [ ] Confirm `/api/debug/*` endpoints are not accessible (guarded by profile setup)
-- [ ] Deploy behind HTTPS (Render provides this automatically)
-
-### Health Check Verification
-```bash
-# Should return {"status":"UP"} without internal details
-curl https://your-backend-url/actuator/health
-```
-
----
-
-## 🛠 Active API Endpoints
-
-Our endpoints are split into structural Swagger groups:
-
-| Group | Endpoint | Method | Role | Description |
-|---|---|---|---|---|
-| **1. Auth** | `/api/auth/register` | `POST` | Public | Registers user and assigns USER role. |
-| **1. Auth** | `/api/auth/login` | `POST` | Public | Returns stateful JWT token. |
-| **2. Products** | `/api/products` | `GET` | Public | Paged & cached product list. |
-| **2. Products** | `/api/products/{id}` | `GET` | Public | Cached product details. |
-| **3. Cart** | `/api/cart` | `GET` | User | Fetch user's cart state. |
-| **3. Cart** | `/api/cart/add` | `POST` | User | Add products to cart. |
-| **4. Orders** | `/api/orders` | `POST` | User | Place order and reserve stock. |
-| **5. Payments** | `/api/payments/create-order` | `POST` | User | Create Razorpay payment order. |
-| **5. Payments** | `/api/payments/verify` | `POST` | User | Verify payment and confirm order. |
-| **6. Admin** | `/api/admin/dashboard` | `GET` | Admin | Multi-dimensional financial analytics. |
-
-> 💡 **Rate Limiting:** Auth endpoints (`/api/auth/**`) are rate-limited to 10 requests per minute per IP address.
+* **Frontend:** `http://localhost:3000`
+* **Backend REST API:** `http://localhost:8080`

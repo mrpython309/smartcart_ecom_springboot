@@ -16,19 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
- * OpenAPI / Swagger configuration for SmartCart.
- *
- * <p>Access the Swagger UI at: {@code /swagger-ui.html}
- * <p>API Docs JSON at: {@code /v3/api-docs}
- *
- * <p>APIs are grouped by module for easier navigation:
- * <ul>
- *   <li>Authentication — register, login</li>
- *   <li>Products — browse, search, filter</li>
- *   <li>Cart — add, update, remove items</li>
- *   <li>Orders — place, track, cancel orders</li>
- *   <li>Admin — dashboard, product/category/order management</li>
- * </ul>
+ * Swagger API documentation configuration.
  */
 @Configuration
 public class SwaggerConfig {
