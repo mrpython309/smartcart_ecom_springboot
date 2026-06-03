@@ -146,6 +146,9 @@ public class DataInitializer implements CommandLineRunner {
             
             // Generate a visually distinct random placeholder using seed
             String imageUrl = "https://picsum.photos/seed/" + seedWord + i + "/500/500";
+            if ("Tea Tree Anti-Acne Gel".equals(name)) {
+                imageUrl = "https://aromamagic.com/cdn/shop/products/SC102044-1.jpg?v=1746431342&width=600";
+            }
             
             Product newProduct = createProduct(
                 name, 
