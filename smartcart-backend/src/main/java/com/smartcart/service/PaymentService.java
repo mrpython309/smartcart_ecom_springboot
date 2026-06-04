@@ -21,6 +21,7 @@ import java.util.Formatter;
 
 @Slf4j
 @Service
+@SuppressWarnings("null")
 public class PaymentService {
 
     private final RazorpayClient razorpayClient;

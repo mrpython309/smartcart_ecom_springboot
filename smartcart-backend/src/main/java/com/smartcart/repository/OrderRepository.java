@@ -1,6 +1,5 @@
 package com.smartcart.repository;
 
-import com.smartcart.dto.DailyRevenueDto;
 import com.smartcart.entity.Order;
 import com.smartcart.enums.OrderStatus;
 import org.springframework.data.domain.Page;
@@ -41,9 +40,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :since")
     long countOrdersSince(LocalDateTime since);
 
-    @Query("SELECT new com.smartcart.dto.DailyRevenueDto(CAST(FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') AS String), SUM(o.totalAmount)) " +
-           "FROM Order o WHERE o.createdAt >= :since AND o.status != 'CANCELLED' " +
-           "GROUP BY CAST(FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') AS String) " +
-           "ORDER BY CAST(FUNCTION('DATE_FORMAT', o.createdAt, '%Y-%m-%d') AS String) ASC")
-    List<DailyRevenueDto> getDailyRevenueSince(LocalDateTime since);
+    @Query(value = "SELECT DATE_FORMAT(o.created_at, '%Y-%m-%d') AS day, SUM(o.total_amount) AS value " +
+           "FROM orders o WHERE o.created_at >= :since AND o.status != 'CANCELLED' " +
+           "GROUP BY DATE_FORMAT(o.created_at, '%Y-%m-%d') " +
+           "ORDER BY day ASC", nativeQuery = true)
+    List<Object[]> getDailyRevenueSinceRaw(LocalDateTime since);
 }

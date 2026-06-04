@@ -1,5 +1,6 @@
 package com.smartcart.service;
 
+import com.smartcart.dto.DailyRevenueDto;
 import com.smartcart.dto.DashboardDto;
 import com.smartcart.dto.OrderDto;
 import com.smartcart.dto.PagedResponse;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 @Transactional(readOnly = true)
 public class AdminService {
 
@@ -61,7 +64,14 @@ public class AdminService {
                 .monthlyRevenue(orderRepository.getRevenueSince(thirtyDaysAgo))
                 .monthlyOrders(orderRepository.countOrdersSince(thirtyDaysAgo))
                 .recentOrders(recentOrderDtos)
-                .dailyRevenue(orderRepository.getDailyRevenueSince(LocalDateTime.now().minusDays(7)))
+                .dailyRevenue(
+                    orderRepository.getDailyRevenueSinceRaw(LocalDateTime.now().minusDays(7)).stream()
+                        .map(row -> DailyRevenueDto.builder()
+                            .day((String) row[0])
+                            .value(row[1] instanceof BigDecimal ? (BigDecimal) row[1] : new BigDecimal(row[1].toString()))
+                            .build())
+                        .collect(Collectors.toList())
+                )
                 .build();
 
         log.info("Dashboard stats generated successfully");

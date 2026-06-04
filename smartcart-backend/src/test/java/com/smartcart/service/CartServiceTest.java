@@ -29,6 +29,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CartService Unit Tests")
+@SuppressWarnings("null")
 class CartServiceTest {
 
     @Mock
