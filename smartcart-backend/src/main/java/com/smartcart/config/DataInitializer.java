@@ -85,54 +85,90 @@ public class DataInitializer implements CommandLineRunner {
     private void initializeData() {
         log.info("Initializing categories and products...");
 
-        Category electronics = getOrCreateCategory("Electronics", "Smartphones, laptops, and gadgets", "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400");
+        Category electronics = getOrCreateCategory("Electronics", "Smartphones, laptops, and gadgets",
+                "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400");
         createProductsForCategory(electronics, Arrays.asList(
-            "Apple iPhone 15 Pro",
-            "Samsung Galaxy S24 Ultra",
-            "MacBook Air M3",
-            "Dell XPS 13",
-            "Sony WH-1000XM5 Headphones",
-            "Apple Watch Series 9",
-            "Samsung 55-inch Crystal 4K TV",
-            "PlayStation 5 Slim",
-            "Logitech MX Master 3S Mouse",
-            "Apple iPad Air M2"
-        ), new BigDecimal("9995"),new BigDecimal("134900"),"Electronics","electronics";
+                "Apple iPhone 15 Pro",
+                "Samsung Galaxy S24 Ultra",
+                "MacBook Air M3",
+                "Dell XPS 13",
+                "Sony WH-1000XM5 Headphones",
+                "Apple Watch Series 9",
+                "Samsung 55-inch Crystal 4K TV",
+                "PlayStation 5 Slim",
+                "Logitech MX Master 3S Mouse",
+                "Apple iPad Air M2"), new BigDecimal("9995"), new BigDecimal("134900"), "Electronics", "electronics");
 
-        Category fashion = getOrCreateCategory("Fashion", "Clothing, shoes, and accessories", "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400");
+        Category fashion = getOrCreateCategory("Fashion", "Clothing, shoes, and accessories",
+                "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400");
         createProductsForCategory(fashion, Arrays.asList(
-            "Classic Denim Jacket", "Premium Slim Fit Shirt", "Running Sneakers Pro", "Leather Crossbody Bag",
-            "Aviator Sunglasses", "Men's Chronograph Watch", "Cotton Comfort Joggers", "Summer Floral Dress",
-            "Woolen Winter Beanie", "Designer Formal Suit"
-        ), new BigDecimal("20"), new BigDecimal("300"), "StyleX", "fashion");
+                "Nike Air Zoom Pegasus 41",
+                "Adidas Ultraboost Light",
+                "Levi's 511 Slim Fit Jeans",
+                "Tommy Hilfiger Polo Shirt",
+                "Puma Essentials Hoodie",
+                "Ray-Ban Aviator Sunglasses",
+                "Fossil Gen 6 Smartwatch",
+                "Nike Sports Backpack",
+                "Levi's Denim Jacket",
+                "Van Heusen Formal Suit"), new BigDecimal("999"), new BigDecimal("14999"), "Fashion", "fashion");
 
-        Category home = getOrCreateCategory("Home & Living", "Furniture, decor, and kitchen essentials", "https://images.unsplash.com/photo-1484101403633-562f891d0d67?w=400");
+        Category home = getOrCreateCategory("Home & Living", "Furniture, decor, and kitchen essentials",
+                "https://images.unsplash.com/photo-1484101403633-562f891d0d67?w=400");
         createProductsForCategory(home, Arrays.asList(
-            "Modern Oak Coffee Table", "Smart LED Desk Lamp", "Premium Non-Stick Cookware Set", "Orthopedic Memory Foam Pillow",
-            "Robot Vacuum Cleaner", "Ceramic Dinnerware Set", "Luxury Cotton Bath Towels", "Aromatherapy Essential Oil Diffuser",
-            "Ergonomic Office Chair", "Bohemian Pattern Rug"
-        ), new BigDecimal("15"), new BigDecimal("600"), "HomeStyle", "furniture");
+                "IKEA LACK Coffee Table",
+                "Philips Smart LED Lamp",
+                "Prestige Non-Stick Cookware Set",
+                "Sleepwell Memory Foam Pillow",
+                "Eureka Forbes Robot Vacuum",
+                "Milton Dinner Set",
+                "Bombay Dyeing Bath Towel Set",
+                "Philips Aroma Diffuser",
+                "Green Soul Office Chair",
+                "Home Centre Area Rug"), new BigDecimal("499"), new BigDecimal("24999"), "Home & Living",
+                "home & living");
 
-        Category books = getOrCreateCategory("Books", "Fiction, non-fiction, and educational books", "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400");
+        Category books = getOrCreateCategory("Books", "Fiction, non-fiction, and educational books",
+                "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400");
         createProductsForCategory(books, Arrays.asList(
-            "Atomic Habits by James Clear", "The Psychology of Money", "1984 by George Orwell", "Sapiens by Yuval Noah Harari",
-            "Dune by Frank Herbert", "Thinking, Fast and Slow", "The Great Gatsby", "Harry Potter Box Set",
-            "Clean Code by Robert Martin", "The Lord of the Rings"
-        ), new BigDecimal("10"), new BigDecimal("100"), "Penguin", "books");
+                "Atomic Habits",
+                "The Psychology of Money",
+                "Rich Dad Poor Dad",
+                "Deep Work",
+                "Clean Code",
+                "The Pragmatic Programmer",
+                "Sapiens",
+                "1984",
+                "Dune",
+                "Harry Potter Box Set"), new BigDecimal("299"), new BigDecimal("3999"), "Books", "books");
 
-        Category sports = getOrCreateCategory("Sports & Fitness", "Sports equipment and fitness gear", "https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=400");
+        Category sports = getOrCreateCategory("Sports & Fitness", "Sports equipment and fitness gear",
+                "https://images.unsplash.com/photo-1461896836934-bd45ba8fcf9b?w=400");
         createProductsForCategory(sports, Arrays.asList(
-            "Premium Eco-Friendly Yoga Mat", "Adjustable Dumbbell Set (up to 25kg)", "Smart Jump Rope", "Resistance Bands Set",
-            "Foam Roller for Muscle Recovery", "Kettlebell 16kg", "Whey Protein Powder", "Stainless Steel Water Flask",
-            "Boxing Gloves 12oz", "Push-up Board System"
-        ), new BigDecimal("12"), new BigDecimal("250"), "FitGear", "sports");
+                "Boldfit Yoga Mat",
+                "Bowflex Adjustable Dumbbells",
+                "Crossrope Jump Rope",
+                "Resistance Band Set",
+                "TriggerPoint Foam Roller",
+                "16kg Kettlebell",
+                "Optimum Nutrition Whey Protein",
+                "Milton Steel Water Bottle",
+                "USI Boxing Gloves",
+                "Push-Up Board Pro"), new BigDecimal("399"), new BigDecimal("14999"), "Sports", "sports");
 
-        Category beauty = getOrCreateCategory("Beauty & Health", "Skincare, makeup, and health products", "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400");
+        Category beauty = getOrCreateCategory("Beauty & Health", "Skincare, makeup, and health products",
+                "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400");
         createProductsForCategory(beauty, Arrays.asList(
-            "Vitamin C Brightening Face Serum", "Organic Daily Moisturizer", "Hyaluronic Acid Toner", "SPF 50 Sunscreen",
-            "Activated Charcoal Face Wash", "Matte Liquid Lipstick", "Volumizing Mascara", "Rose Quartz Facial Roller",
-            "Hydrating Sheet Mask Pack", "Tea Tree Anti-Acne Gel"
-        ), new BigDecimal("8"), new BigDecimal("60"), "GlowPure", "skincare");
+                "Minimalist Vitamin C Serum",
+                "Cetaphil Moisturizing Lotion",
+                "The Ordinary Hyaluronic Acid",
+                "Neutrogena Ultra Sheer SPF 50",
+                "Mamaearth Charcoal Face Wash",
+                "Lakme Matte Lipstick",
+                "Maybelline Sky High Mascara",
+                "Rose Quartz Facial Roller",
+                "Garnier Sheet Mask Pack",
+                "The Derma Co Tea Tree Gel"), new BigDecimal("199"), new BigDecimal("1999"), "Skincare", "skincare");
 
         log.info("Successfully seeded 6 categories and exactly 60 premium products into MySQL.");
     }
@@ -154,8 +190,8 @@ public class DataInitializer implements CommandLineRunner {
                     java.math.RoundingMode.HALF_UP); // 15% discount
 
             String imageUrl = null;
-            if ("Tea Tree Anti-Acne Gel".equals(name)) {
-                imageUrl = "https://aromamagic.com/cdn/shop/products/SC102044-1.jpg?v=1746431342&width=600";
+            if ("Apple iPhone 15 Pro".equals(name)) {
+                imageUrl = "https://www.apple.com/newsroom/images/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/article/Apple-iPhone-15-Pro-lineup-color-lineup-geo-230912_big.jpg.large.jpg";
             } else if ("Hydrating Sheet Mask Pack".equals(name)) {
                 imageUrl = "https://rukmini1.flixcart.com/image/1500/1500/xif0q/face-pack/q/y/p/25-solutions-sheet-mask-hydrating-with-hyaluronic-acid-sheet-original-imagzqsqwugp2wzk.jpeg?q=70";
             } else if ("Rose Quartz Facial Roller".equals(name)) {
@@ -164,17 +200,62 @@ public class DataInitializer implements CommandLineRunner {
                 imageUrl = "https://www.lakmeindia.com/cdn/shop/files/29112_S2-8901030859073_1000x.jpg?v=1742202692";
             } else if ("Matte Liquid Lipstick".equals(name)) {
                 imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            } else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
+            }else if ("Matte Liquid Lipstick".equals(name)) {
+                imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
             }
+
 
             Product newProduct = createProduct(
                     name,
-                    "Premium quality " + name.toLowerCase()
-                            + " with 1-year warranty and top-tier materials. Perfectly designed for everyday use.",
+                  "Premium quality " + name + " from " + defaultBrand +
+                  ". Highly rated product with premium build quality, excellent customer reviews and reliable performance.",
                     price, discountPrice,
-                    (int) (Math.random() * 100) + 10,
+                    100,
                     category,
                     defaultBrand,
-                    4.0 + (Math.random()),
+                    4.5,
                     imageUrl);
             allProducts.add(newProduct);
         }
@@ -205,7 +286,7 @@ public class DataInitializer implements CommandLineRunner {
                 .category(category)
                 .brand(brand)
                 .rating(rating)
-                .reviewCount((int) (Math.random() * 500) + 50)
+                .reviewCount(500)
                 .imageUrl(imageUrl)
                 .active(true)
                 .build());
