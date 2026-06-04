@@ -26,7 +26,6 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
-@SuppressWarnings("null")
 public class RedisConfig implements CachingConfigurer {
 
     private GenericJackson2JsonRedisSerializer redisJsonSerializer() {

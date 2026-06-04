@@ -50,3 +50,5 @@ uploads/
 
 # --- Misc ---
 powershell.bat
+powershell.cmd
+**/powershell.cmd
