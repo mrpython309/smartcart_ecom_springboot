@@ -73,6 +73,30 @@ export default function Checkout() {
       const paymentOrder = paymentRes.data.data;
       
       // 3. Open Razorpay Popup
+      if (paymentOrder.razorpayKeyId === 'rzp_test_yourkeyhere' || paymentOrder.razorpayOrderId.startsWith('mock_')) {
+        toast.loading('Development Mode: Simulating secure payment...', { id: 'payment-sim' });
+        setTimeout(async () => {
+          try {
+            // 4. Verify Payment after simulated success
+            await paymentAPI.verify({
+               razorpayOrderId: paymentOrder.razorpayOrderId,
+               razorpayPaymentId: 'pay_mock_' + Math.random().toString(36).substring(7),
+               razorpaySignature: 'mock_signature',
+               orderId: order.id
+            });
+            toast.dismiss('payment-sim');
+            toast.success('Simulated payment successful! Order confirmed.');
+            await fetchCart();
+            navigate('/orders');
+          } catch (err) {
+            toast.dismiss('payment-sim');
+            toast.error('Simulated payment verification failed.');
+            navigate('/orders');
+          }
+        }, 1500);
+        return;
+      }
+
       const options = {
         key: paymentOrder.razorpayKeyId,
         amount: paymentOrder.amount * 100, // in paise
