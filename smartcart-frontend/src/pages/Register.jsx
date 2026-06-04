@@ -45,15 +45,6 @@ export default function Register() {
     }
   };
 
-  const Field = ({ label, name, type = 'text', placeholder }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1.5">{label}</label>
-      <input type={type} placeholder={placeholder} className={`input-field ${errors[name] ? 'ring-2 ring-red-500' : ''}`}
-        value={form[name]} onChange={e => setForm({ ...form, [name]: e.target.value })} />
-      {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
-    </div>
-  );
-
   return (
     <div className="min-h-screen flex animate-fade-in">
       {/* Left — Visual */}
@@ -90,11 +81,31 @@ export default function Register() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <Field label="First Name" name="firstName" placeholder="John" />
-              <Field label="Last Name" name="lastName" placeholder="Doe" />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                <input type="text" placeholder="John" className={`input-field ${errors.firstName ? 'ring-2 ring-red-500' : ''}`}
+                  value={form.firstName} onChange={e => setForm({ ...form, firstName: e.target.value })} />
+                {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                <input type="text" placeholder="Doe" className={`input-field ${errors.lastName ? 'ring-2 ring-red-500' : ''}`}
+                  value={form.lastName} onChange={e => setForm({ ...form, lastName: e.target.value })} />
+                {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+              </div>
             </div>
-            <Field label="Email" name="email" type="email" placeholder="you@example.com" />
-            <Field label="Phone (optional)" name="phone" placeholder="+91 98765 43210" />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+              <input type="email" placeholder="you@example.com" className={`input-field ${errors.email ? 'ring-2 ring-red-500' : ''}`}
+                value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone (optional)</label>
+              <input type="text" placeholder="+91 98765 43210" className={`input-field ${errors.phone ? 'ring-2 ring-red-500' : ''}`}
+                value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
               <div className="relative">
