@@ -97,7 +97,7 @@ public class DataInitializer implements CommandLineRunner {
             "PlayStation 5 Slim",
             "Logitech MX Master 3S Mouse",
             "Apple iPad Air M2"
-        ), new BigDecimal("100"), new BigDecimal("1500"), "TechBrand", "electronics");
+        ), new BigDecimal("9995"),new BigDecimal("134900"),"Electronics","electronics";
 
         Category fashion = getOrCreateCategory("Fashion", "Clothing, shoes, and accessories", "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400");
         createProductsForCategory(fashion, Arrays.asList(
