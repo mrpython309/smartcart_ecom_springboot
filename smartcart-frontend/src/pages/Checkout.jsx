@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, CreditCard, Plus, CheckCircle } from 'lucide-react';
 import { userAPI, orderAPI, paymentAPI } from '../api/services';
@@ -19,6 +19,7 @@ export default function Checkout() {
   const [placing, setPlacing] = useState(false);
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({ street: '', city: '', state: '', zipCode: '', country: 'India', isDefault: false });
+  const placingRef = useRef(false);
 
   useEffect(() => {
     userAPI.getAddresses().then(r => {
@@ -43,7 +44,9 @@ export default function Checkout() {
   };
 
   const handlePlaceOrder = async () => {
+    if (placingRef.current) return;
     if (!selectedAddress) { toast.error('Please select a delivery address'); return; }
+    placingRef.current = true;
     setPlacing(true);
     try {
       // 1. Place initial order (PENDING)
@@ -114,6 +117,7 @@ export default function Checkout() {
       // Note: setPlacing(false) is handled in verify or payment.failed or the catch block
       
     } catch (err) {
+      placingRef.current = false;
       setPlacing(false);
       toast.error(err.response?.data?.message || 'Failed to place order');
     }
