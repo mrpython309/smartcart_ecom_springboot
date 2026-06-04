@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("null")
 @Transactional(readOnly = true)
 public class AdminService {
 

@@ -23,7 +23,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Profile({"dev", "prod"})
-@SuppressWarnings("null")
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;

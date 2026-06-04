@@ -29,7 +29,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProductService Unit Tests")
-@SuppressWarnings("null")
 class ProductServiceTest {
 
     @Mock
