@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Profile({"dev", "prod"})
+@Profile({ "dev", "prod" })
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
@@ -34,7 +34,7 @@ public class DataInitializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         log.info("Starting SmartCart Data Initialization...");
-        
+
         try {
             if (userRepository.count() == 0) {
                 log.info("No users found. Initializing default admin and test users...");
@@ -42,7 +42,7 @@ public class DataInitializer implements CommandLineRunner {
             } else {
                 log.info("Users already exist. Skipping user initialization.");
             }
-            
+
             // Ensure we always have our 60 seeded products
             long productCount = productRepository.count();
             if (productCount < 60) {
@@ -51,7 +51,7 @@ public class DataInitializer implements CommandLineRunner {
             } else {
                 log.info("Database already contains {} products. Skipping data seeding.", productCount);
             }
-            
+
             log.info("SmartCart Data Initialization completed successfully.");
         } catch (Exception e) {
             log.error("Error during data initialization: {}", e.getMessage(), e);
@@ -87,9 +87,16 @@ public class DataInitializer implements CommandLineRunner {
 
         Category electronics = getOrCreateCategory("Electronics", "Smartphones, laptops, and gadgets", "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400");
         createProductsForCategory(electronics, Arrays.asList(
-            "Smartphone X Pro", "Laptop Ultra HD", "Wireless Noise-Cancelling Earbuds", "Smart Watch Series 9",
-            "4K Ultra HD Smart TV", "Bluetooth Portable Speaker", "Next-Gen Gaming Console", "Mechanical RGB Keyboard", 
-            "Wireless Precision Mouse", "Pro Tablet 12-inch"
+            "Apple iPhone 15 Pro",
+            "Samsung Galaxy S24 Ultra",
+            "MacBook Air M3",
+            "Dell XPS 13",
+            "Sony WH-1000XM5 Headphones",
+            "Apple Watch Series 9",
+            "Samsung 55-inch Crystal 4K TV",
+            "PlayStation 5 Slim",
+            "Logitech MX Master 3S Mouse",
+            "Apple iPad Air M2"
         ), new BigDecimal("100"), new BigDecimal("1500"), "TechBrand", "electronics");
 
         Category fashion = getOrCreateCategory("Fashion", "Clothing, shoes, and accessories", "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400");
@@ -130,19 +137,22 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Successfully seeded 6 categories and exactly 60 premium products into MySQL.");
     }
 
-    private void createProductsForCategory(Category category, List<String> productNames, BigDecimal minPrice, BigDecimal maxPrice, String defaultBrand, String seedWord) {
+    private void createProductsForCategory(Category category, List<String> productNames, BigDecimal minPrice,
+            BigDecimal maxPrice, String defaultBrand, String seedWord) {
         List<Product> allProducts = productRepository.findAll();
         for (int i = 0; i < productNames.size(); i++) {
             String name = productNames.get(i);
-            
+
             // Check if product already exists to avoid duplicates if partial seed was ran
             if (allProducts.stream().anyMatch(p -> p.getName().equals(name))) {
                 continue;
             }
 
-            BigDecimal price = minPrice.add(BigDecimal.valueOf(Math.random() * maxPrice.doubleValue())).setScale(2, java.math.RoundingMode.HALF_UP);
-            BigDecimal discountPrice = price.multiply(BigDecimal.valueOf(0.85)).setScale(2, java.math.RoundingMode.HALF_UP); // 15% discount
-            
+            BigDecimal price = minPrice.add(BigDecimal.valueOf(Math.random() * maxPrice.doubleValue())).setScale(2,
+                    java.math.RoundingMode.HALF_UP);
+            BigDecimal discountPrice = price.multiply(BigDecimal.valueOf(0.85)).setScale(2,
+                    java.math.RoundingMode.HALF_UP); // 15% discount
+
             String imageUrl = null;
             if ("Tea Tree Anti-Acne Gel".equals(name)) {
                 imageUrl = "https://aromamagic.com/cdn/shop/products/SC102044-1.jpg?v=1746431342&width=600";
@@ -155,17 +165,17 @@ public class DataInitializer implements CommandLineRunner {
             } else if ("Matte Liquid Lipstick".equals(name)) {
                 imageUrl = "https://www.justherbs.in/cdn/shop/products/11SoftPinkBERRY-min.jpg?v=1746536449&width=713";
             }
-            
+
             Product newProduct = createProduct(
-                name, 
-                "Premium quality " + name.toLowerCase() + " with 1-year warranty and top-tier materials. Perfectly designed for everyday use.", 
-                price, discountPrice, 
-                (int) (Math.random() * 100) + 10, 
-                category, 
-                defaultBrand, 
-                4.0 + (Math.random()), 
-                imageUrl
-            );
+                    name,
+                    "Premium quality " + name.toLowerCase()
+                            + " with 1-year warranty and top-tier materials. Perfectly designed for everyday use.",
+                    price, discountPrice,
+                    (int) (Math.random() * 100) + 10,
+                    category,
+                    defaultBrand,
+                    4.0 + (Math.random()),
+                    imageUrl);
             allProducts.add(newProduct);
         }
     }
@@ -184,8 +194,8 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private Product createProduct(String name, String description, BigDecimal price,
-                                   BigDecimal discountPrice, int stock, Category category,
-                                   String brand, double rating, String imageUrl) {
+            BigDecimal discountPrice, int stock, Category category,
+            String brand, double rating, String imageUrl) {
         return productRepository.save(Product.builder()
                 .name(name)
                 .description(description)
