@@ -191,11 +191,11 @@ public class DataInitializer implements CommandLineRunner {
 
             String imageUrl = null;
             if ("Apple iPhone 15 Pro".equals(name)) {
-                imageUrl = "https://www.apple.com/newsroom/images/2023/09/apple-unveils-iphone-15-pro-and-iphone-15-pro-max/article/Apple-iPhone-15-Pro-lineup-color-lineup-geo-230912_big.jpg.large.jpg";
-            } else if ("Hydrating Sheet Mask Pack".equals(name)) {
-                imageUrl = "https://rukmini1.flixcart.com/image/1500/1500/xif0q/face-pack/q/y/p/25-solutions-sheet-mask-hydrating-with-hyaluronic-acid-sheet-original-imagzqsqwugp2wzk.jpeg?q=70";
-            } else if ("Rose Quartz Facial Roller".equals(name)) {
-                imageUrl = "https://suspire.in/cdn/shop/files/IMG_9095_1080x.jpg?v=1684673881";
+                imageUrl = "https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_pro.png";
+            } else if ("Samsung Galaxy S24 Ultra".equals(name)) {
+                imageUrl = "https://vlebazaar.in/image/cache/catalog/Samsung-Galaxy-S24-Ultra-5G-AI-Smartphone-Titanium-Gray-12GB-256GB-Stora/Samsung-Galaxy-S24-Ultra-5G-AI-Smartphone-Titanium-Gray-12GB-256GB-Storage-S928B-1500x1500.jpg";
+            } else if ("MacBook Air M3".equals(name)) {
+                imageUrl = "https://maplestore.in/cdn/shop/files/1_M3_2024_Air_Midnight_7591747b-6f93-4d28-bd6a-09ab1c96f0a3.png?v=1779415964&width=1946";
             } else if ("Volumizing Mascara".equals(name)) {
                 imageUrl = "https://www.lakmeindia.com/cdn/shop/files/29112_S2-8901030859073_1000x.jpg?v=1742202692";
             } else if ("Matte Liquid Lipstick".equals(name)) {
