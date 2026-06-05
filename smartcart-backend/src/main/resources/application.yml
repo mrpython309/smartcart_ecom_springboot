@@ -35,6 +35,14 @@ app:
   upload:
     dir: uploads
 
+# --- AWS S3 ---
+aws:
+  s3:
+    bucket: ${AWS_S3_BUCKET:}
+    region: ${AWS_REGION:us-east-1}
+    access-key: ${AWS_ACCESS_KEY_ID:}
+    secret-key: ${AWS_SECRET_ACCESS_KEY:}
+
 # --- Razorpay ---
 razorpay:
   key:
