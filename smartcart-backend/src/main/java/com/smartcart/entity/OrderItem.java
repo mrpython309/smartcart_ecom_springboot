@@ -25,6 +25,7 @@ public class OrderItem {
     private BigDecimal unitPrice;
 
     private String productName;
+    @Column(length = 1024)
     private String productImageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)

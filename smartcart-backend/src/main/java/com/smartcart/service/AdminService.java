@@ -66,7 +66,7 @@ public class AdminService {
                 .dailyRevenue(
                     orderRepository.getDailyRevenueSinceRaw(LocalDateTime.now().minusDays(7)).stream()
                         .map(row -> DailyRevenueDto.builder()
-                            .day((String) row[0])
+                            .day(row[0].toString())
                             .value(row[1] instanceof BigDecimal ? (BigDecimal) row[1] : new BigDecimal(row[1].toString()))
                             .build())
                         .collect(Collectors.toList())

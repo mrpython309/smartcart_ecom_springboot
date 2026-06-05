@@ -40,9 +40,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :since")
     long countOrdersSince(LocalDateTime since);
 
-    @Query(value = "SELECT DATE_FORMAT(o.created_at, '%Y-%m-%d') AS day, SUM(o.total_amount) AS value " +
+    @Query(value = "SELECT CAST(o.created_at AS DATE) AS day, SUM(o.total_amount) AS value " +
            "FROM orders o WHERE o.created_at >= :since AND o.status != 'CANCELLED' " +
-           "GROUP BY DATE_FORMAT(o.created_at, '%Y-%m-%d') " +
+           "GROUP BY CAST(o.created_at AS DATE) " +
            "ORDER BY day ASC", nativeQuery = true)
     List<Object[]> getDailyRevenueSinceRaw(LocalDateTime since);
 }
