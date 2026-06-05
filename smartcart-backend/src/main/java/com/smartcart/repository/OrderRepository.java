@@ -4,6 +4,7 @@ import com.smartcart.entity.Order;
 import com.smartcart.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -16,17 +17,30 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
+    @Override
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
+    Page<Order> findAll(Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
+    Optional<Order> findById(Long id);
+
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
     Page<Order> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
     @Query("SELECT o FROM Order o WHERE o.status = 'PENDING' AND o.createdAt <= :threshold")
     List<Order> findPendingOrdersBefore(LocalDateTime threshold);
 
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
     List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
     Optional<Order> findByIdAndUserId(Long id, Long userId);
 
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
     Optional<Order> findByOrderNumber(String orderNumber);
 
+    @EntityGraph(attributePaths = {"user", "payment", "items"})
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
 
     long countByStatus(OrderStatus status);
