@@ -38,8 +38,8 @@ app:
 # --- Razorpay ---
 razorpay:
   key:
-    id: ${RAZORPAY_KEY_ID:rzp_test_placeholder}
-    secret: ${RAZORPAY_KEY_SECRET:placeholder_secret}
+    id: ${RAZORPAY_KEY_ID:rzp_test_SxvMpr5x6fTxwn}
+    secret: ${RAZORPAY_KEY_SECRET:pf8pQGd2JltsOxJhXv56T7mR}
 
 
 # --- Actuator ---
