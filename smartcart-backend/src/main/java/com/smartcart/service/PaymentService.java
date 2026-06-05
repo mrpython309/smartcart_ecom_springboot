@@ -40,7 +40,7 @@ public class PaymentService {
      * Returns the Razorpay order ID to be used by the frontend.
      */
     public String createRazorpayOrder(BigDecimal amount, String receipt) {
-        if ("yoursecrethere".equals(keySecret)) {
+        if ("yoursecrethere".equals(keySecret) || "placeholder_secret".equals(keySecret)) {
             String mockId = "mock_order_" + java.util.UUID.randomUUID().toString().substring(0, 8);
             log.info("Development Mode: Returning mock Razorpay order ID: {}", mockId);
             return mockId;
@@ -67,7 +67,7 @@ public class PaymentService {
      * This ensures the payment response hasn't been tampered with.
      */
     public boolean verifyPaymentSignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
-        if ("mock_signature".equals(razorpaySignature) && "yoursecrethere".equals(keySecret)) {
+        if ("mock_signature".equals(razorpaySignature) && ("yoursecrethere".equals(keySecret) || "placeholder_secret".equals(keySecret))) {
             log.info("Development Mode: Validating mock signature");
             return true;
         }
