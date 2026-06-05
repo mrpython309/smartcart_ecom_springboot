@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(50),
-    avatar_url VARCHAR(500),
+    avatar_url VARCHAR(1024),
     role VARCHAR(20) NOT NULL DEFAULT 'USER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS categories (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
-    image_url VARCHAR(500),
+    image_url VARCHAR(1024),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS products (
     price DECIMAL(10,2) NOT NULL,
     discount_price DECIMAL(10,2),
     stock INT NOT NULL DEFAULT 0,
-    image_url VARCHAR(500),
+    image_url VARCHAR(1024),
     brand VARCHAR(100),
     rating DOUBLE PRECISION DEFAULT 0,
     review_count INT DEFAULT 0,
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     quantity INT NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
     product_name VARCHAR(255),
-    product_image_url VARCHAR(500),
+    product_image_url VARCHAR(1024),
     order_id BIGINT NOT NULL,
     product_id BIGINT,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
