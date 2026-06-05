@@ -27,8 +27,6 @@ public class FileStorageService {
     private final Path uploadDir;
     private final String bucketName;
     private final String region;
-    private final String accessKey;
-    private final String secretKey;
     private S3Client s3Client;
 
     public FileStorageService(
@@ -47,8 +45,6 @@ public class FileStorageService {
 
         this.bucketName = bucketName;
         this.region = region;
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
 
         if (bucketName != null && !bucketName.trim().isEmpty()) {
             try {
