@@ -18,8 +18,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.domain.Specification;
+import jakarta.persistence.criteria.Predicate;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,12 +70,41 @@ public class ProductService {
     public PagedResponse<ProductDto> filterProducts(String query, Long categoryId,
                                                      BigDecimal minPrice, BigDecimal maxPrice,
                                                      int page, int size, String sortBy, String sortDir) {
-        log.info("Filtering products — category={}, minPrice={}, maxPrice={}", categoryId, minPrice, maxPrice);
+        log.info("Filtering products — query='{}', category={}, minPrice={}, maxPrice={}", query, categoryId, minPrice, maxPrice);
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Product> products = productRepository.filterProducts(query, categoryId, minPrice, maxPrice, pageable);
+
+        Specification<Product> spec = (root, q, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Always filter for active products
+            predicates.add(cb.equal(root.get("active"), true));
+
+            if (query != null && !query.trim().isEmpty()) {
+                String searchPattern = "%" + query.trim().toLowerCase() + "%";
+                Predicate nameLike = cb.like(cb.lower(root.get("name")), searchPattern);
+                Predicate brandLike = cb.like(cb.lower(root.get("brand")), searchPattern);
+                predicates.add(cb.or(nameLike, brandLike));
+            }
+
+            if (categoryId != null) {
+                predicates.add(cb.equal(root.get("category").get("id"), categoryId));
+            }
+
+            if (minPrice != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("price"), minPrice));
+            }
+
+            if (maxPrice != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("price"), maxPrice));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
         return mapToPagedResponse(products);
     }
 
