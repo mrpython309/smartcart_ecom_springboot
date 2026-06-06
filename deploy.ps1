@@ -217,10 +217,10 @@ $env:VITE_API_BASE_URL = "https://$BACKEND_URL/api"
 Write-Host "Configuring React API Base URL to: https://$BACKEND_URL/api" -ForegroundColor Gray
 
 # Build static bundle
-cd smartcart-frontend
+Set-Location smartcart-frontend
 npm ci
 npm run build
-cd ..
+Set-Location ..
 
 Write-Host "Creating S3 bucket for Frontend website hosting..." -ForegroundColor Yellow
 try {
