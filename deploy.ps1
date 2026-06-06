@@ -32,7 +32,8 @@ try {
         $REGION = "us-east-1"
     }
     Write-Host "Authenticated with AWS Account: $ACCOUNT_ID in Region: $REGION" -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "Failed to authenticate with AWS CLI. Please run 'aws configure' first." -ForegroundColor Red
     exit 1
 }
@@ -44,7 +45,8 @@ Write-Host "Verifying Docker is running..." -ForegroundColor Yellow
 try {
     docker info > $null
     Write-Host "Docker is active and running." -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "Docker is not running. Please start Docker Desktop and run the script again." -ForegroundColor Red
     exit 1
 }
@@ -66,7 +68,8 @@ Write-Host "Creating S3 bucket for media uploads..." -ForegroundColor Yellow
 try {
     if ($REGION -eq "us-east-1") {
         aws s3api create-bucket --bucket $UPLOAD_BUCKET --region $REGION > $null
-    } else {
+    }
+    else {
         aws s3api create-bucket --bucket $UPLOAD_BUCKET --region $REGION --create-bucket-configuration LocationConstraint=$REGION > $null
     }
     # Disable Block Public Access for upload assets (so they can be read by clients)
@@ -91,7 +94,8 @@ try {
     aws s3api put-bucket-policy --bucket $UPLOAD_BUCKET --policy file://s3-policy.json
     Remove-Item s3-policy.json
     Write-Host "S3 upload bucket created and public-read access configured." -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "Warning/Error during S3 upload bucket setup: $_. Continuing..." -ForegroundColor Yellow
 }
 
@@ -117,7 +121,8 @@ try {
         --db-name smartcart_db `
         --publicly-accessible `
         --no-cli-pager > $null
-} catch {
+}
+catch {
     Write-Host "RDS Database might already exist or is launching. Continuing..." -ForegroundColor Yellow
 }
 
@@ -127,7 +132,8 @@ try {
 Write-Host "Creating Amazon ECR Repository..." -ForegroundColor Yellow
 try {
     aws ecr create-repository --repository-name smartcart-backend --no-cli-pager > $null
-} catch {
+}
+catch {
     Write-Host "ECR Repository already exists. Continuing..." -ForegroundColor Yellow
 }
 
@@ -162,7 +168,8 @@ $trustPolicy | Out-File -FilePath trust-policy.json -Encoding utf8
 try {
     aws iam create-role --role-name AppRunnerECRAccessRole --assume-role-policy-document file://trust-policy.json --no-cli-pager > $null
     aws iam attach-role-policy --role-name AppRunnerECRAccessRole --policy-arn arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRDataAccess
-} catch {
+}
+catch {
     Write-Host "AppRunnerECRAccessRole role already exists. Continuing..." -ForegroundColor Yellow
 }
 Remove-Item trust-policy.json
@@ -192,7 +199,8 @@ try {
         --service-name smartcart-backend-service `
         --source-configuration "ImageRepository={ImageIdentifier=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/smartcart-backend:latest,ImageRepositoryType=ECR,ImageConfiguration={Port=8080,RuntimeEnvironmentVariables=[{Name=SPRING_PROFILES_ACTIVE,Value=prod},{Name=SPRING_DATASOURCE_URL,Value=jdbc:mysql://$DB_ENDPOINT:3306/smartcart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true},{Name=SPRING_DATASOURCE_USERNAME,Value=smartcart},{Name=SPRING_DATASOURCE_PASSWORD,Value=$dbPassword},{Name=AWS_S3_BUCKET,Value=$UPLOAD_BUCKET},{Name=AWS_REGION,Value=$REGION}]}},AuthenticationConfiguration={AccessRoleArn=arn:aws:iam::$ACCOUNT_ID:role/AppRunnerECRAccessRole}" `
         --no-cli-pager > $null
-} catch {
+}
+catch {
     Write-Host "App Runner service is already created or updating. Continuing..." -ForegroundColor Yellow
 }
 
@@ -226,7 +234,8 @@ Write-Host "Creating S3 bucket for Frontend website hosting..." -ForegroundColor
 try {
     if ($REGION -eq "us-east-1") {
         aws s3api create-bucket --bucket $FRONTEND_BUCKET --region $REGION > $null
-    } else {
+    }
+    else {
         aws s3api create-bucket --bucket $FRONTEND_BUCKET --region $REGION --create-bucket-configuration LocationConstraint=$REGION > $null
     }
     
@@ -255,7 +264,8 @@ try {
     # Set as S3 static website hosting
     aws s3 website "s3://$FRONTEND_BUCKET/" --index-document index.html --error-document index.html
     Write-Host "S3 static website hosting configured." -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "Warning/Error during S3 frontend setup: $_. Continuing..." -ForegroundColor Yellow
 }
 
