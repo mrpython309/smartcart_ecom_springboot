@@ -40,8 +40,7 @@ public class DataInitializer implements CommandLineRunner {
                 log.info("No users found. Initializing default admin and test users...");
                 initializeUsers();
             } else {
-                log.info("Users already exist. Updating default user and admin phone numbers...");
-                updateUserPhoneNumbers();
+                log.info("Users already exist. Skipping user initialization.");
             }
 
             // Ensure we always have our 60 seeded products
@@ -66,7 +65,7 @@ public class DataInitializer implements CommandLineRunner {
                 .lastName("User")
                 .email("admin@smartcart.com")
                 .password(passwordEncoder.encode("Admin@123"))
-                .phone("9876543210")
+                .phone("8080811780")
                 .role(Role.ADMIN)
                 .build();
         userRepository.save(admin);
@@ -77,23 +76,10 @@ public class DataInitializer implements CommandLineRunner {
                 .lastName("Doe")
                 .email("john@example.com")
                 .password(passwordEncoder.encode("User@123"))
-                .phone("9876543211")
+                .phone("8080811780")
                 .role(Role.USER)
                 .build();
         userRepository.save(testUser);
-    }
-
-    private void updateUserPhoneNumbers() {
-        userRepository.findByEmail("admin@smartcart.com").ifPresent(admin -> {
-            admin.setPhone("8080811780");
-            userRepository.save(admin);
-            log.info("Updated admin phone number to 8080811780");
-        });
-        userRepository.findByEmail("john@example.com").ifPresent(user -> {
-            user.setPhone("8080811780");
-            userRepository.save(user);
-            log.info("Updated test user phone number to 8080811780");
-        });
     }
 
     private void initializeData() {
