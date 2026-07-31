@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.interceptor.CacheErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 /**
  * Redis cache configuration for SmartCart.
+ * Gracefully falls back to in-memory caching if Redis is unavailable.
  */
 @Slf4j
 @Configuration
@@ -50,26 +52,37 @@ public class RedisConfig implements CachingConfigurer {
 
     @Bean
     public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        RedisSerializer<Object> jsonSerializer = redisJsonSerializer();
-        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10))
-                .serializeKeysWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new StringRedisSerializer()))
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(jsonSerializer))
-                .disableCachingNullValues();
+        try {
+            // Verify Redis is actually reachable before building the cache manager
+            connectionFactory.getConnection().ping();
+            log.info("Redis connection verified. Using Redis as cache provider.");
 
-        // Per-cache TTL overrides
-        Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
-        cacheConfigurations.put("products", defaultConfig.entryTtl(Duration.ofMinutes(10)));
-        cacheConfigurations.put("product-detail", defaultConfig.entryTtl(Duration.ofMinutes(15)));
-        cacheConfigurations.put("categories", defaultConfig.entryTtl(Duration.ofMinutes(30)));
+            RedisSerializer<Object> jsonSerializer = redisJsonSerializer();
+            RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
+                    .entryTtl(Duration.ofMinutes(10))
+                    .serializeKeysWith(RedisSerializationContext.SerializationPair
+                            .fromSerializer(new StringRedisSerializer()))
+                    .serializeValuesWith(RedisSerializationContext.SerializationPair
+                            .fromSerializer(jsonSerializer))
+                    .disableCachingNullValues();
 
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(defaultConfig)
-                .withInitialCacheConfigurations(cacheConfigurations)
-                .transactionAware()
-                .build();
+            // Per-cache TTL overrides
+            Map<String, RedisCacheConfiguration> cacheConfigurations = new HashMap<>();
+            cacheConfigurations.put("products", defaultConfig.entryTtl(Duration.ofMinutes(10)));
+            cacheConfigurations.put("product-detail", defaultConfig.entryTtl(Duration.ofMinutes(15)));
+            cacheConfigurations.put("categories", defaultConfig.entryTtl(Duration.ofMinutes(30)));
+
+            return RedisCacheManager.builder(connectionFactory)
+                    .cacheDefaults(defaultConfig)
+                    .withInitialCacheConfigurations(cacheConfigurations)
+                    .transactionAware()
+                    .build();
+        } catch (Exception e) {
+            log.warn("Redis is unavailable ({}). Falling back to in-memory cache. "
+                    + "The application will work normally but cache will not persist across restarts.",
+                    e.getMessage());
+            return new ConcurrentMapCacheManager("products", "product-detail", "categories");
+        }
     }
 
     @Override

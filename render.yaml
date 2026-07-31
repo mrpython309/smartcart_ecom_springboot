@@ -25,6 +25,14 @@ services:
         fromDatabase:
           name: smartcart-db
           property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: smartcart-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: smartcart-db
+          property: password
       # Automatically wire Redis host and port from the managed Redis service
       - key: REDIS_HOST
         fromService:
