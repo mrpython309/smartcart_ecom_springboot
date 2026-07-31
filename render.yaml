@@ -53,7 +53,7 @@ services:
       - key: RAZORPAY_KEY_SECRET
         sync: false
       - key: ALLOWED_ORIGINS
-        value: https://smartcart-shop.onrender.com
+        value: https://smartcart-shop.onrender.com,https://smartcart-shop-gm45.onrender.com
       - key: PORT
         value: "8080"
 
@@ -71,7 +71,7 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://smartcart-backend.onrender.com/api
+        value: https://smartcart-backend-gm45.onrender.com/api
 
   # -----------------------------------------------------------------
   # Redis Cache Instance
