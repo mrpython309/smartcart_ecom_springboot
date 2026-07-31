@@ -16,17 +16,22 @@ export default function Checkout() {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('RAZORPAY');
   const [loading, setLoading] = useState(true);
+  const [addressLoading, setAddressLoading] = useState(true);
   const [placing, setPlacing] = useState(false);
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({ street: '', city: '', state: '', zipCode: '', country: 'India', isDefault: false });
   const placingRef = useRef(false);
 
   useEffect(() => {
+    setAddressLoading(true);
     userAPI.getAddresses().then(r => {
       setAddresses(r.data.data);
       const def = r.data.data.find(a => a.isDefault) || r.data.data[0];
       if (def) setSelectedAddress(def.id);
-    }).catch(() => {}).finally(() => setLoading(false));
+    }).catch(() => {}).finally(() => {
+      setAddressLoading(false);
+      setLoading(false);
+    });
   }, []);
 
   const handleAddAddress = async (e) => {
@@ -194,8 +199,18 @@ export default function Checkout() {
             )}
 
             <div className="space-y-3">
-              {addresses.length === 0 ? (
-                <p className="text-sm text-gray-500">No addresses found. Please add one.</p>
+              {addressLoading ? (
+                <div className="space-y-3 animate-pulse">
+                  <div className="h-20 bg-gray-100 rounded-xl flex items-center px-4">
+                    <div className="w-4 h-4 bg-gray-200 rounded-full mr-3"></div>
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                    </div>
+                  </div>
+                </div>
+              ) : addresses.length === 0 ? (
+                <p className="text-sm text-gray-500">No addresses found. Please add one above.</p>
               ) : addresses.map(addr => (
                 <label key={addr.id} className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
                   selectedAddress === addr.id ? 'border-primary-500 bg-primary-50/50' : 'border-gray-100 hover:border-gray-200'}`}>
