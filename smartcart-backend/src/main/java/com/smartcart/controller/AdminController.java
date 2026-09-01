@@ -15,11 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * AdminController handles administrative operations including dashboard statistics,
- * user management, and product/category crud operations.
- * Requires ADMIN role for all endpoints.
- */
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -31,7 +26,6 @@ public class AdminController {
     private final CategoryService categoryService;
     private final OrderService orderService;
 
-    // ===== Dashboard =====
     @GetMapping("/dashboard")
     @Operation(summary = "Get dashboard statistics")
     public ResponseEntity<ApiResponse<DashboardDto>> getDashboard() {
@@ -39,7 +33,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success(dashboard));
     }
 
-    // ===== User Management =====
     @GetMapping("/users")
     @Operation(summary = "Get all users")
     public ResponseEntity<ApiResponse<PagedResponse<UserDto>>> getUsers(
@@ -58,7 +51,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Role updated", user));
     }
 
-    // ===== Product Management =====
     @PostMapping("/products")
     @Operation(summary = "Create a new product")
     public ResponseEntity<ApiResponse<ProductDto>> createProduct(@Valid @RequestBody ProductDto productDto) {
@@ -83,7 +75,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Product deleted", null));
     }
 
-    // ===== Category Management =====
     @PostMapping("/categories")
     @Operation(summary = "Create a new category")
     public ResponseEntity<ApiResponse<CategoryDto>> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
@@ -108,7 +99,6 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.success("Category deleted", null));
     }
 
-    // ===== Order Management =====
     @GetMapping("/orders")
     @Operation(summary = "Get all orders")
     public ResponseEntity<ApiResponse<PagedResponse<OrderDto>>> getAllOrders(

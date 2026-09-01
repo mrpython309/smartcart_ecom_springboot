@@ -34,10 +34,7 @@ public class JwtService {
         this.environment = environment;
     }
 
-    /**
-     * Validates that the JWT secret has been explicitly set in production.
-     * Prevents running production with the publicly visible default key.
-     */
+    // fail fast if someone deploys to prod with the default key
     @PostConstruct
     public void validateJwtSecret() {
         boolean isProd = Arrays.asList(environment.getActiveProfiles()).contains("prod");

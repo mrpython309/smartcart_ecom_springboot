@@ -26,9 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * ProductService manages the product lifecycle.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -52,7 +49,6 @@ public class ProductService {
     @Transactional(readOnly = true)
     @Cacheable(value = "product-detail", key = "#id")
     public ProductDto getProductById(Long id) {
-        log.info("Fetching product by id={}", id);
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
         return mapToDto(product);

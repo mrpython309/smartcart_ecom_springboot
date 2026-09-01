@@ -1,9 +1,6 @@
-# ===================================================================
-# SmartCart — Development Profile
-# ===================================================================
+# Dev profile - local MySQL + Redis
 
 spring:
-  # --- Database (MySQL) ---
   datasource:
     url: jdbc:mysql://localhost:3306/smartcart_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
     username: root
@@ -20,14 +17,12 @@ spring:
       ddl-auto: update
     show-sql: true
 
-  # --- Redis (local) ---
   data:
     redis:
       host: localhost
       port: 6379
       timeout: 2000ms
 
-# --- Logging ---
 logging:
   level:
     root: INFO

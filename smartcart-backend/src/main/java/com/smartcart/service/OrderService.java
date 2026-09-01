@@ -34,11 +34,8 @@ public class OrderService {
     private final UserRepository userRepository;
     private final PaymentService paymentService;
 
-    /**
-     * Phase 1: Creates an order with PENDING status.
-     * Stock is reserved (deducted) and cart is cleared.
-     * Payment must be completed via Razorpay before order is CONFIRMED.
-     */
+    // creates order in PENDING state, reserves stock, clears cart
+    // payment still needs to happen via razorpay after this
     @Transactional
     public OrderDto placeOrder(Long userId, CreateOrderRequest request) {
         User user = userRepository.findById(userId)
@@ -110,13 +107,12 @@ public class OrderService {
         cart.getItems().clear();
         cartRepository.save(cart);
 
+        // TODO: send order confirmation email here
         log.info("Order placed (PENDING): {} for user: {}", order.getOrderNumber(), user.getEmail());
         return mapToOrderDto(order);
     }
 
-    /**
-     * Phase 2: Confirms order after successful payment verification.
-     */
+    // marks order as confirmed after razorpay payment goes through
     @Transactional
     public OrderDto confirmOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
@@ -129,9 +125,7 @@ public class OrderService {
         return mapToOrderDto(order);
     }
 
-    /**
-     * Handles payment failure: cancels order and restores stock.
-     */
+    // payment failed — cancel order and put stock back
     @Transactional
     public void handlePaymentFailure(Long orderId) {
         Order order = orderRepository.findById(orderId)
@@ -139,7 +133,8 @@ public class OrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
 
-        // Restore stock
+        // restore stock
+        // FIXME: this does N separate saves, should batch update
         for (OrderItem item : order.getItems()) {
             if (item.getProduct() != null) {
                 Product product = item.getProduct();
@@ -267,9 +262,7 @@ public class OrderService {
                 .build();
     }
 
-    /**
-     * Cancels an order by a user and triggers refunds.
-     */
+    // user-initiated cancellation + refund
     @Transactional
     public OrderDto cancelUserOrder(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUserId(orderId, userId)

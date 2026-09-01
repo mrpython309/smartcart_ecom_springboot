@@ -15,10 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Scheduled task to cleanup stale pending orders.
- * This prevents stock from being "leaked" when users abandon checkout.
- */
+// runs every 10 min to cancel abandoned pending orders and put stock back
+// TODO: also verify with razorpay API if payment was actually captured before cancelling
 @Slf4j
 @Component
 @RequiredArgsConstructor

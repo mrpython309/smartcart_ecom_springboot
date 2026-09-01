@@ -22,10 +22,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Redis cache configuration for SmartCart.
- * Gracefully falls back to in-memory caching if Redis is unavailable.
- */
+// Redis + fallback to in-memory if Redis is down
 @Slf4j
 @Configuration
 public class RedisConfig implements CachingConfigurer {
@@ -90,26 +87,22 @@ public class RedisConfig implements CachingConfigurer {
         return new CacheErrorHandler() {
             @Override
             public void handleCacheGetError(RuntimeException exception, Cache cache, Object key) {
-                log.error("Redis cache GET error for key {} in cache {}: {}. Falling back to database.",
-                        key, cache.getName(), exception.getMessage());
+                log.error("Redis GET failed for cache {}: {}", cache.getName(), exception.getMessage());
             }
 
             @Override
             public void handleCachePutError(RuntimeException exception, Cache cache, Object key, Object value) {
-                log.error("Redis cache PUT error for key {} in cache {}: {}",
-                        key, cache.getName(), exception.getMessage());
+                log.error("Redis PUT failed for cache {}: {}", cache.getName(), exception.getMessage());
             }
 
             @Override
             public void handleCacheEvictError(RuntimeException exception, Cache cache, Object key) {
-                log.error("Redis cache EVICT error for key {} in cache {}: {}",
-                        key, cache.getName(), exception.getMessage());
+                // not much we can do here
             }
 
             @Override
             public void handleCacheClearError(RuntimeException exception, Cache cache) {
-                log.error("Redis cache CLEAR error in cache {}: {}",
-                        cache.getName(), exception.getMessage());
+                // same, just let it go
             }
         };
     }

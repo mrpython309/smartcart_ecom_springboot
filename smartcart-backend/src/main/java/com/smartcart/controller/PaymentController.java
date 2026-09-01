@@ -31,10 +31,7 @@ public class PaymentController {
     @Value("${razorpay.key.id}")
     private String razorpayKeyId;
 
-    /**
-     * Creates a Razorpay order for the given SmartCart order.
-     * Called after order is placed with PENDING status.
-     */
+    // called right after order is created in PENDING state to initiate razorpay order
     @PostMapping("/create-order")
     public ResponseEntity<ApiResponse<PaymentOrderResponse>> createPaymentOrder(
             @AuthenticationPrincipal User user,
@@ -77,9 +74,7 @@ public class PaymentController {
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
-    /**
-     * Verifies the Razorpay payment signature and confirms the order.
-     */
+    // verifies razorpay signature and confirms order
     @PostMapping("/verify")
     public ResponseEntity<ApiResponse<OrderDto>> verifyPayment(
             @AuthenticationPrincipal User user,

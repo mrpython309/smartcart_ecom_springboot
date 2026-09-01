@@ -6,6 +6,7 @@ const API = axios.create({
 });
 
 // Request interceptor — attach JWT token
+// TODO: migrate from localStorage to httpOnly cookie for better security
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('smartcart_token');
   if (token) {

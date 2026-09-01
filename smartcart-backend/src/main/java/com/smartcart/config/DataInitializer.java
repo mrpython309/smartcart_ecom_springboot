@@ -285,6 +285,7 @@ public class DataInitializer implements CommandLineRunner {
                 .build());
     }
 
+    // grabbed these from amazon/flipkart product pages
     private String getImageUrlForProduct(String name) {
         if ("Apple iPhone 15 Pro".equals(name)) return "https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/iphone_15_pro.png";
         if ("Samsung Galaxy S24 Ultra".equals(name)) return "https://vlebazaar.in/image/cache/catalog/Samsung-Galaxy-S24-Ultra-5G-AI-Smartphone-Titanium-Gray-12GB-256GB-Stora/Samsung-Galaxy-S24-Ultra-5G-AI-Smartphone-Titanium-Gray-12GB-256GB-Storage-S928B-1500x1500.jpg";

@@ -44,7 +44,6 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/products/upload-image").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
@@ -52,12 +51,9 @@ public class SecurityConfig {
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
-                // Admin endpoints
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/actuator/**").hasRole("ADMIN")
-                // Payment endpoints require authentication (handled by controller)
                 .requestMatchers("/api/payments/**").authenticated()
-                // All other endpoints require authentication
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

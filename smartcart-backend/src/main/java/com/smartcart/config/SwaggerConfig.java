@@ -15,9 +15,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-/**
- * Swagger API documentation configuration.
- */
 @Configuration
 public class SwaggerConfig {
 
@@ -26,24 +23,17 @@ public class SwaggerConfig {
         final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
                 .info(new Info()
-                        .title("SmartCart E-Commerce API")
-                        .description("Enterprise-grade REST API for the SmartCart E-Commerce Platform. "
-                                + "Supports user authentication, product management, shopping cart, "
-                                + "order processing, and payment integration with Razorpay.")
-                        .version("2.0.0")
+                        .title("SmartCart API")
+                        .description("REST API for SmartCart e-commerce platform")
+                        .version("1.0.0")
                         .contact(new Contact()
-                                .name("SmartCart Team")
-                                .email("support@smartcart.com")
-                                .url("https://github.com/smartcart"))
+                                .name("SmartCart")
+                                .email("support@smartcart.com"))
                         .license(new License()
-                                .name("MIT License")
+                                .name("MIT")
                                 .url("https://opensource.org/licenses/MIT")))
-                .externalDocs(new ExternalDocumentation()
-                        .description("SmartCart GitHub Repository")
-                        .url("https://github.com/smartcart"))
                 .servers(List.of(
-                        new Server().url("http://localhost:8080").description("Local Development"),
-                        new Server().url("https://api.smartcart.com").description("Production")
+                        new Server().url("http://localhost:8080").description("Local")
                 ))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()

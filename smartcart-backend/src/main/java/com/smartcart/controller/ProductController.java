@@ -14,10 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
-/**
- * ProductController provides endpoints for browsing, searching, and filtering products.
- * Accessible by all users, including unauthenticated guests.
- */
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor

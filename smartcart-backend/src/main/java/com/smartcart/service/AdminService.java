@@ -27,10 +27,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * AdminService provides business logic for the administrative dashboard,
- * including real-time analytics, user role updates, and system-wide statistics.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor

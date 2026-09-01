@@ -55,7 +55,7 @@ public class CartService {
 
         Cart cart = getOrCreateCart(userId);
 
-        // Check if product already in cart
+
         CartItem existingItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
                 .orElse(null);
 

@@ -35,10 +35,7 @@ public class PaymentService {
         this.keySecret = keySecret;
     }
 
-    /**
-     * Creates a Razorpay order for the given amount.
-     * Returns the Razorpay order ID to be used by the frontend.
-     */
+    // creates a razorpay order - returns the order ID for frontend
     public String createRazorpayOrder(BigDecimal amount, String receipt) {
         if ("yoursecrethere".equals(keySecret) || "placeholder_secret".equals(keySecret)) {
             String mockId = "mock_order_" + java.util.UUID.randomUUID().toString().substring(0, 8);
@@ -62,10 +59,7 @@ public class PaymentService {
         }
     }
 
-    /**
-     * Verifies the Razorpay payment signature using HMAC-SHA256.
-     * This ensures the payment response hasn't been tampered with.
-     */
+    // HMAC-SHA256 signature check — ref: https://razorpay.com/docs/payments/server-integration/java/payment-gateway/build-integration/#14-verify-payment-signature
     public boolean verifyPaymentSignature(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
         if ("mock_signature".equals(razorpaySignature) && ("yoursecrethere".equals(keySecret) || "placeholder_secret".equals(keySecret))) {
             log.info("Development Mode: Validating mock signature");
@@ -81,9 +75,6 @@ public class PaymentService {
         }
     }
 
-    /**
-     * Marks payment as completed after successful verification.
-     */
     @Transactional
     public void markPaymentCompleted(Payment payment, String razorpayPaymentId) {
         payment.setStatus(PaymentStatus.COMPLETED);
@@ -92,9 +83,6 @@ public class PaymentService {
         log.info("Payment completed: {}", razorpayPaymentId);
     }
 
-    /**
-     * Marks payment as failed.
-     */
     @Transactional
     public void markPaymentFailed(Payment payment) {
         payment.setStatus(PaymentStatus.FAILED);
@@ -120,9 +108,7 @@ public class PaymentService {
         return result;
     }
 
-    /**
-     * Triggers a live refund via the Razorpay API.
-     */
+    // live refund via razorpay API
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public String refundPayment(String transactionId, BigDecimal amount) throws RazorpayException {
         // Convert amount back to paise (assuming BigDecimal for precision)

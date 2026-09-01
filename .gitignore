@@ -1,8 +1,4 @@
-# ==========================
-# SmartCart — Git Ignore Rules
-# ==========================
-
-# --- Java / Maven ---
+# Java / Maven
 target/
 *.class
 *.jar
@@ -11,10 +7,9 @@ target/
 *.log
 logs/
 
-# --- Spring Boot ---
 *.pid
 
-# --- IDE ---
+# IDE
 .idea/
 *.iml
 .vscode/
@@ -26,29 +21,28 @@ logs/
 .settings/
 .factorypath
 
-# --- Node / Frontend ---
+# Node / Frontend
 node_modules/
 dist/
 build/
 .cache/
 
-# --- Environment ---
+# Environment
 .env
 .env.*
 !.env.example
 
-# --- OS ---
+# OS
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# --- Docker ---
+# Docker
 *.log
 
-# --- Uploads ---
+# Uploads
 uploads/
 
-# --- Misc ---
 powershell.bat
 powershell.cmd
 **/powershell.cmd

@@ -16,13 +16,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-/**
- * Rate limiting filter for authentication endpoints.
- * Limits requests to /api/auth/** to prevent brute-force attacks and registration spam.
- *
- * <p>Strategy: Sliding window — tracks timestamps of recent requests per IP.
- * Allows a maximum of {@value #MAX_REQUESTS} requests per {@value #WINDOW_MS}ms window.
- */
+// simple sliding-window rate limiter for login/register endpoints
 @Slf4j
 @Component
 public class RateLimitFilter extends OncePerRequestFilter {

@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * DataMigrationConfig runs on startup to handle database migrations and data fixes
- * that are not easily handled by Hibernate's ddl-auto.
- */
+// one-time fix: some products had null version from before I added @Version
 @Slf4j
 @Configuration
 @RequiredArgsConstructor

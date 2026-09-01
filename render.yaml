@@ -1,14 +1,7 @@
-# ===================================================================
-# SmartCart - Render Blueprint (Infrastructure as Code)
-# ===================================================================
-# This file defines all services for one-click deployment on Render.
-# Deploy via: https://render.com/deploy -> Connect your GitHub repo
-# ===================================================================
+# Render Blueprint for deployment
 
 services:
-  # -----------------------------------------------------------------
   # Spring Boot Backend (Docker Web Service)
-  # -----------------------------------------------------------------
   - type: web
     name: smartcart-backend
     runtime: docker
@@ -20,7 +13,6 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      # Automatically wire PostgreSQL connection URL from the managed database
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: smartcart-db
@@ -33,7 +25,6 @@ services:
         fromDatabase:
           name: smartcart-db
           property: password
-      # Automatically wire Redis host and port from the managed Redis service
       - key: REDIS_HOST
         fromService:
           type: redis
@@ -44,10 +35,8 @@ services:
           type: redis
           name: smartcart-cache
           property: port
-      # Automatically generate a secure 64-character JWT secret on first build
       - key: JWT_SECRET
         generateValue: true
-      # Razorpay payment keys (to be provided in the Render UI during setup)
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
@@ -57,9 +46,7 @@ services:
       - key: PORT
         value: "8080"
 
-  # -----------------------------------------------------------------
-  # React Frontend (Static Site on Global CDN)
-  # -----------------------------------------------------------------
+  # React Frontend
   - type: web
     name: smartcart-shop
     runtime: static
@@ -73,18 +60,14 @@ services:
       - key: VITE_API_BASE_URL
         value: https://smartcart-backend-gm45.onrender.com/api
 
-  # -----------------------------------------------------------------
   # Redis Cache Instance
-  # -----------------------------------------------------------------
   - type: redis
     name: smartcart-cache
     plan: free
     region: oregon
     ipAllowList: []
 
-# -------------------------------------------------------------------
 # Managed PostgreSQL Database Instance
-# -------------------------------------------------------------------
 databases:
   - name: smartcart-db
     plan: free

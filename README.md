@@ -1,51 +1,76 @@
-# SmartCart — E-Commerce Application
+# SmartCart
 
-SmartCart is a full-stack e-commerce application. It includes a Spring Boot backend and a React (Vite) frontend.
+Full-stack e-commerce app I built to learn Spring Boot + React end to end. Uses JWT auth, Razorpay payments, Redis caching, and Docker for deployment.
 
-## Technologies
-* **Backend:** Spring Boot, Spring Security (JWT), Spring Data JPA, Hibernate, MySQL, Redis
-* **Frontend:** React, Vite, Tailwind CSS, Axios, React Router
+**Live:** Deployed on Render (free tier so first load takes ~30s to spin up)
+
+## Features
+- Browse/search/filter products with pagination
+- JWT-based authentication with role-based access (USER / ADMIN)
+- Full shopping cart → checkout → Razorpay payment flow
+- Order management with cancellation & automated refunds
+- Admin dashboard with analytics, product/category/user management
+- Redis caching with automatic fallback if Redis is down
+- Rate limiting on auth endpoints to prevent brute force
+- Dockerized with docker-compose for local development
+
+## Tech Stack
+* **Backend:** Spring Boot 3, Spring Security, Spring Data JPA, MySQL, Redis, Razorpay SDK
+* **Frontend:** React 18, Vite, Tailwind CSS, Axios, React Router
+* **DevOps:** Docker, GitHub Actions CI, Render
 
 ## Project Structure
-* `smartcart-backend/`: The backend REST API codebase.
-* `smartcart-frontend/`: The frontend client codebase.
+```
+smartcart-backend/    → Spring Boot REST API
+smartcart-frontend/   → React SPA
+docker-compose.yml    → Full stack with MySQL + Redis
+```
 
-## Getting Started
+## Running Locally
 
-### Database Setup
-1. Make sure MySQL is running locally on port `3306`.
-2. Create the database for the application:
+### Database
+1. MySQL running on port 3306
+2. Create the database:
    ```sql
    CREATE DATABASE smartcart_db;
    ```
-3. The default application development configuration expects database username `root` and password `admin`. If your local setup is different, update the values in `smartcart-backend/src/main/resources/application-dev.yml`.
+3. Default creds are `root`/`admin` — change in `application-dev.yml` if yours are different
 
-### Caching (Optional)
-This project uses Redis for caching product catalog and categories. By default, it expects Redis running on `localhost:6379`. 
-* If Redis is not running, the application will fallback to database queries (warnings will be logged).
-
-### Running the Backend
-Navigate to the backend folder and run Spring Boot using Maven:
+### Backend
 ```bash
 cd smartcart-backend
 ./mvnw spring-boot:run
 ```
-The backend server starts on `http://localhost:8080`.
-The Swagger API documentation is available at `http://localhost:8080/swagger-ui.html` when running in the development profile.
+Starts on http://localhost:8080. Swagger docs at http://localhost:8080/swagger-ui.html
 
-### Running the Frontend
-Navigate to the frontend folder, install dependencies, and start the development server:
+### Frontend
 ```bash
 cd smartcart-frontend
 npm install
 npm run dev
 ```
-The frontend application runs on `http://localhost:5173`.
+Runs on http://localhost:5173
 
-### Running via Docker Compose
-If you have Docker Desktop running, you can run the entire system (including MySQL and Redis services) in containers:
+### Docker (everything at once)
 ```bash
 docker compose up --build
 ```
-* **Frontend:** `http://localhost:3000`
-* **Backend REST API:** `http://localhost:8080`
+Frontend → http://localhost:3000, Backend → http://localhost:8080
+
+### Redis (optional)
+If Redis isn't running locally the app still works — it just falls back to in-memory caching and logs a warning.
+
+## Known Issues & Future Work
+- Search is basic LIKE queries, no fuzzy matching — would switch to Elasticsearch for a production app
+- JWT stored in localStorage (XSS risk) — should migrate to httpOnly cookies
+- Rate limiter is in-memory so it won't work properly if running multiple backend instances
+- No email notifications yet for order status changes
+- Product images are URLs only, no actual file upload to S3 in prod yet
+- Order cleanup task runs every 10 min but doesn't verify with Razorpay API if payment was actually made
+
+## What I Learned
+- How Spring Security filter chain actually works (spent way too long debugging 403s)
+- Transaction boundaries matter a lot — had a bug where stock was reserved but cart wasn't cleared because they were in separate transactions
+- Optimistic locking with `@Version` is great until you realize all your existing rows have `null` version — had to write a migration for that
+- Redis can go down and your app shouldn't crash — built a graceful fallback
+- Razorpay's HMAC signature verification is straightforward once you read their docs, but the webhook vs callback distinction tripped me up initially
