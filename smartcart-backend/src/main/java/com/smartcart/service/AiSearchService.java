@@ -5,8 +5,10 @@ import com.smartcart.dto.SmartSearchCriteria;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -54,12 +56,19 @@ public class AiSearchService {
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-            ResponseEntity<Map> response = restTemplate.postForEntity(GEMINI_API_URL + geminiApiKey, entity, Map.class);
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    GEMINI_API_URL + geminiApiKey, 
+                    HttpMethod.POST, 
+                    entity, 
+                    new ParameterizedTypeReference<Map<String, Object>>() {});
             
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                @SuppressWarnings("unchecked")
                 List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.getBody().get("candidates");
                 if (candidates != null && !candidates.isEmpty()) {
+                    @SuppressWarnings("unchecked")
                     Map<String, Object> contentMap = (Map<String, Object>) candidates.get(0).get("content");
+                    @SuppressWarnings("unchecked")
                     List<Map<String, Object>> parts = (List<Map<String, Object>>) contentMap.get("parts");
                     String jsonString = (String) parts.get(0).get("text");
                     

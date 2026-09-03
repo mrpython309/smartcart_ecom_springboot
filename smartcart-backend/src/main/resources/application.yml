@@ -35,7 +35,7 @@ app:
   upload:
     dir: uploads
   gemini:
-    api-key: ${GEMINI_API_KEY:YOUR_GEMINI_API_KEY_HERE}
+    api-key: ${GEMINI_API_KEY:YOUR_GEMINI_API_KEY}
 
 # --- AWS S3 ---
 aws:
