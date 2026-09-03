@@ -122,6 +122,12 @@ public class DataInitializer implements CommandLineRunner {
                 updated = true;
             }
 
+            // 5. Fix broken Cetaphil Image
+            if ("Cetaphil Moisturizing Lotion".equals(p.getName()) && p.getImageUrl() != null && p.getImageUrl().contains("cloudfront.net")) {
+                p.setImageUrl("https://m.media-amazon.com/images/I/61l1q+eBf8L._SL1500_.jpg");
+                updated = true;
+            }
+
             if (updated) {
                 productRepository.save(p);
             }
@@ -338,7 +344,7 @@ public class DataInitializer implements CommandLineRunner {
         if ("USI Boxing Gloves".equals(name)) return "https://m.media-amazon.com/images/I/41is8KHx+bL._SY300_SX300_QL70_FMwebp_.jpg";
         if ("Push-Up Board Pro".equals(name)) return "https://jalandharstyle.com/cdn/shop/files/PushupBoard-01.jpg?v=1706435254";
         if ("Minimalist Vitamin C Serum".equals(name)) return "https://m.media-amazon.com/images/I/717Kb7GUFyL.jpg";
-        if ("Cetaphil Moisturizing Lotion".equals(name)) return "https://d2lilqwyy1nquj.cloudfront.net/variant/1771828308125-582e36ac-9e2b-4f51-a1b3-4d4801f61dcb-1771828307384.png";
+        if ("Cetaphil Moisturizing Lotion".equals(name)) return "https://m.media-amazon.com/images/I/61l1q+eBf8L._SL1500_.jpg";
         if ("The Ordinary Hyaluronic Acid".equals(name)) return "https://images-static.nykaa.com/media/catalog/product/2/4/244c0f5THECI00000093_a1.jpg?tr=w-500";
         if ("Neutrogena Ultra Sheer SPF 50".equals(name)) return "https://m.media-amazon.com/images/I/41XT6-ALAjL._AC_UF1000,1000_QL80_.jpg";
         if ("Mamaearth Charcoal Face Wash".equals(name)) return "https://m.media-amazon.com/images/I/61K3ZK63o9L.jpg";
