@@ -60,3 +60,7 @@ export const adminAPI = {
   getOrders: (params) => API.get('/admin/orders', { params }),
   updateOrderStatus: (orderId, status) => API.put(`/admin/orders/${orderId}/status?status=${status}`),
 };
+
+export const aiAPI = {
+  search: (params) => API.get('/ai/search', { params }),
+};

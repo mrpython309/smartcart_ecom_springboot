@@ -63,6 +63,15 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public PagedResponse<ProductDto> searchByAi(com.smartcart.dto.SmartSearchCriteria criteria, int page, int size) {
+        log.info("Searching products by AI Criteria — criteria={}", criteria);
+        Pageable pageable = PageRequest.of(page, size);
+        Specification<Product> spec = com.smartcart.repository.ProductSpecification.withAiCriteria(criteria);
+        Page<Product> products = productRepository.findAll(spec, pageable);
+        return mapToPagedResponse(products);
+    }
+
+    @Transactional(readOnly = true)
     public PagedResponse<ProductDto> filterProducts(String query, Long categoryId,
                                                      BigDecimal minPrice, BigDecimal maxPrice,
                                                      int page, int size, String sortBy, String sortDir) {

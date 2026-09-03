@@ -5,6 +5,7 @@ Full-stack e-commerce app I built to learn Spring Boot + React end to end. Uses 
 **Live:** Deployed on Render (free tier so first load takes ~30s to spin up)
 
 ## Features
+- **AI-Powered Search:** Natural language product search using Google Gemini API
 - Browse/search/filter products with pagination
 - JWT-based authentication with role-based access (USER / ADMIN)
 - Full shopping cart → checkout → Razorpay payment flow

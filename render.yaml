@@ -25,21 +25,14 @@ services:
         fromDatabase:
           name: smartcart-db
           property: password
-      - key: REDIS_HOST
-        fromService:
-          type: redis
-          name: smartcart-cache
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: smartcart-cache
-          property: port
+
       - key: JWT_SECRET
         generateValue: true
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
         sync: false
       - key: ALLOWED_ORIGINS
         value: https://smartcart-shop.onrender.com,https://smartcart-shop-gm45.onrender.com
@@ -60,12 +53,7 @@ services:
       - key: VITE_API_BASE_URL
         value: https://smartcart-backend-gm45.onrender.com/api
 
-  # Redis Cache Instance
-  - type: redis
-    name: smartcart-cache
-    plan: free
-    region: oregon
-    ipAllowList: []
+
 
 # Managed PostgreSQL Database Instance
 databases:

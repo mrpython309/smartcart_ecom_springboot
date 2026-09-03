@@ -34,6 +34,8 @@ app:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000}
   upload:
     dir: uploads
+  gemini:
+    api-key: ${GEMINI_API_KEY:YOUR_GEMINI_API_KEY_HERE}
 
 # --- AWS S3 ---
 aws:
