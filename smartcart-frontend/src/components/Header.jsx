@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search, Menu, X, User, LogOut, Package, LayoutDashboard, ChevronDown } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import AiSearchModal from './AiSearchModal';
 import { Sparkles } from 'lucide-react';
 
 export default function Header() {
@@ -13,7 +12,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [aiModalOpen, setAiModalOpen] = useState(false);
+
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -59,14 +58,6 @@ export default function Header() {
                 />
               </div>
             </form>
-            <button
-              onClick={() => setAiModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white font-medium shadow-sm hover:shadow-md hover:from-purple-700 hover:to-pink-600 transition-all transform hover:-translate-y-0.5"
-              title="AI Shopping Assistant"
-            >
-              <Sparkles className="w-5 h-5 animate-pulse" />
-              <span className="text-sm hidden lg:block">Ask AI</span>
-            </button>
           </div>
 
           {/* Right Actions */}
@@ -143,12 +134,6 @@ export default function Header() {
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-            <button
-              onClick={() => setAiModalOpen(true)}
-              className="md:hidden p-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-sm"
-            >
-              <Sparkles className="w-5 h-5 animate-pulse" />
-            </button>
           </div>
         </div>
 
@@ -199,7 +184,7 @@ export default function Header() {
         </div>
       </div>
 
-      <AiSearchModal isOpen={aiModalOpen} onClose={() => setAiModalOpen(false)} />
+
     </header>
   );
 }

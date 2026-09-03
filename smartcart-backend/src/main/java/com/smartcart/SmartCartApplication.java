@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(excludeName = "org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration")
+@SpringBootApplication
 @EnableScheduling
 @EnableCaching
 public class SmartCartApplication {
