@@ -7,6 +7,7 @@ export default function AiSearchModal({ isOpen, onClose }) {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
+  const [aiMessage, setAiMessage] = useState('');
   const [searched, setSearched] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ export default function AiSearchModal({ isOpen, onClose }) {
     try {
       const response = await aiAPI.search({ query: query.trim() });
       if (response.data.success) {
-        setResults(response.data.data.content);
+        setResults(response.data.data.products.content);
+        setAiMessage(response.data.data.aiMessage);
       }
     } catch (error) {
       console.error('AI Search failed:', error);
@@ -96,6 +98,16 @@ export default function AiSearchModal({ isOpen, onClose }) {
           ) : searched ? (
             results.length > 0 ? (
               <div className="space-y-3">
+                {aiMessage && (
+                  <div className="mb-6 p-4 bg-gradient-to-r from-purple-100 to-pink-50 rounded-2xl rounded-tl-sm border border-purple-200 flex items-start gap-3 shadow-sm animate-fade-in">
+                    <div className="p-2 bg-purple-500 rounded-full shrink-0">
+                      <Sparkles className="w-4 h-4 text-white" />
+                    </div>
+                    <p className="text-gray-800 text-sm leading-relaxed font-medium">
+                      {aiMessage}
+                    </p>
+                  </div>
+                )}
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2">
                   AI Curated Results
                 </h3>

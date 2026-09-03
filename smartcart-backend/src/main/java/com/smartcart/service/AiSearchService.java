@@ -1,89 +1,72 @@
 package com.smartcart.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smartcart.dto.ProductDto;
 import com.smartcart.dto.SmartSearchCriteria;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AiSearchService {
 
-    @Value("${app.gemini.api-key}")
-    private String geminiApiKey;
+    private final ChatClient chatClient;
 
-    private final ObjectMapper objectMapper;
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    public AiSearchService(ChatClient.Builder chatClientBuilder) {
+        this.chatClient = chatClientBuilder.build();
+    }
 
     public SmartSearchCriteria parseQuery(String query) {
-        if (geminiApiKey == null || geminiApiKey.contains("YOUR_GEMINI_API_KEY")) {
-            log.warn("Gemini API Key is missing. Falling back to keyword search.");
+        try {
+            var outputConverter = new BeanOutputConverter<>(SmartSearchCriteria.class);
+            String format = outputConverter.getFormat();
+
+            String prompt = String.format(
+                    "You are an AI for an e-commerce platform. Extract search parameters from this query: '%s'. " +
+                    "Fields: 'category' (string or null, ONLY use broad departments like 'Electronics', 'Fashion', 'Books'. For specific items like 'laptop' or 'shoes', set category to null and put them in keywords), " +
+                    "'minPrice' (number or null), 'maxPrice' (number or null), 'keywords' (array of string keywords, include the specific product name here). " +
+                    "%%s", query, format);
+
+            String response = chatClient.prompt()
+                    .user(prompt)
+                    .call()
+                    .content();
+
+            return outputConverter.convert(response);
+        } catch (Exception e) {
+            log.error("Failed to parse AI query using Spring AI: {}", e.getMessage());
             return SmartSearchCriteria.builder().keywords(List.of(query.split("\\s+"))).build();
         }
+    }
 
-        String prompt = "You are an AI for an e-commerce platform. Extract search parameters from this query: \"" + query + "\". " +
-                "Return ONLY a valid JSON object (no markdown, no backticks, just the raw JSON). " +
-                "Fields: 'category' (string or null, ONLY use broad departments like 'Electronics', 'Fashion', 'Books'. For specific items like 'laptop' or 'shoes', set category to null and put them in keywords), " +
-                "'minPrice' (number or null), 'maxPrice' (number or null), 'keywords' (array of string keywords, include the specific product name here). " +
-                "Example output: {\"category\":null,\"minPrice\":null,\"maxPrice\":50000,\"keywords\":[\"laptop\",\"gaming\"]}";
-
-        try {
-            Map<String, Object> requestBody = new HashMap<>();
-            
-            // Re-constructing the nested map correctly
-            Map<String, Object> part = new HashMap<>();
-            part.put("text", prompt);
-            Map<String, Object> content = new HashMap<>();
-            content.put("parts", List.of(part));
-            requestBody.put("contents", List.of(content));
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
-
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                    GEMINI_API_URL + geminiApiKey, 
-                    HttpMethod.POST, 
-                    entity, 
-                    new ParameterizedTypeReference<Map<String, Object>>() {});
-            
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                @SuppressWarnings("unchecked")
-                List<Map<String, Object>> candidates = (List<Map<String, Object>>) response.getBody().get("candidates");
-                if (candidates != null && !candidates.isEmpty()) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> contentMap = (Map<String, Object>) candidates.get(0).get("content");
-                    @SuppressWarnings("unchecked")
-                    List<Map<String, Object>> parts = (List<Map<String, Object>>) contentMap.get("parts");
-                    String jsonString = (String) parts.get(0).get("text");
-                    
-                    // Clean up jsonString if the model returned markdown
-                    jsonString = jsonString.replaceAll("```json", "").replaceAll("```", "").trim();
-
-                    return objectMapper.readValue(jsonString, SmartSearchCriteria.class);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Failed to parse AI query: {}", e.getMessage());
+    public String generateRecommendation(String userQuery, List<ProductDto> products) {
+        if (products == null || products.isEmpty()) {
+            return "I couldn't find any products matching your search. Try adjusting your price limit or keywords!";
         }
 
-        // Fallback to simple keyword search
-        return SmartSearchCriteria.builder().keywords(List.of(query.split("\\s+"))).build();
+        String productDetails = products.stream()
+                .limit(3) // Feed top 3 products to keep it concise
+                .map(p -> String.format("- %s (Brand: %s, Price: %.2f)", p.getName(), p.getBrand(), p.getEffectivePrice().doubleValue()))
+                .collect(Collectors.joining("\n"));
+
+        String prompt = String.format(
+                "A user searched for: '%s'. We found these products in our database:\n%s\n" +
+                "Write a short, friendly, and enthusiastic 1-2 sentence response recommending these products to the user. " +
+                "Do not use markdown formatting. Be concise.", 
+                userQuery, productDetails);
+
+        try {
+            return chatClient.prompt()
+                    .user(prompt)
+                    .call()
+                    .content();
+        } catch (Exception e) {
+            log.error("Failed to generate AI recommendation: {}", e.getMessage());
+            return "Here are the best products I found for you!";
+        }
     }
 }

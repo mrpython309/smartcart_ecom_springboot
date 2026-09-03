@@ -23,7 +23,7 @@ public class AiController {
 
     @GetMapping("/search")
     @Operation(summary = "Search products using Natural Language (AI)")
-    public ResponseEntity<ApiResponse<PagedResponse<ProductDto>>> searchProductsByAi(
+    public ResponseEntity<ApiResponse<com.smartcart.dto.AiSearchResponse>> searchProductsByAi(
             @RequestParam String query,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
@@ -34,6 +34,11 @@ public class AiController {
         // 2. Query the database dynamically based on AI criteria
         PagedResponse<ProductDto> products = productService.searchByAi(criteria, page, size);
         
-        return ResponseEntity.ok(ApiResponse.success(products));
+        // 3. Generate a conversational response based on the found products
+        String aiMessage = aiSearchService.generateRecommendation(query, products.getContent());
+        
+        com.smartcart.dto.AiSearchResponse aiResponse = new com.smartcart.dto.AiSearchResponse(products, aiMessage);
+        
+        return ResponseEntity.ok(ApiResponse.success(aiResponse));
     }
 }
