@@ -39,8 +39,9 @@ public class AiSearchService {
 
         String prompt = "You are an AI for an e-commerce platform. Extract search parameters from this query: \"" + query + "\". " +
                 "Return ONLY a valid JSON object (no markdown, no backticks, just the raw JSON). " +
-                "Fields: 'category' (string or null), 'minPrice' (number or null), 'maxPrice' (number or null), 'keywords' (array of string keywords). " +
-                "Example output: {\"category\":\"electronics\",\"minPrice\":null,\"maxPrice\":500,\"keywords\":[\"budget\",\"smartphone\"]}";
+                "Fields: 'category' (string or null, ONLY use broad departments like 'Electronics', 'Fashion', 'Books'. For specific items like 'laptop' or 'shoes', set category to null and put them in keywords), " +
+                "'minPrice' (number or null), 'maxPrice' (number or null), 'keywords' (array of string keywords, include the specific product name here). " +
+                "Example output: {\"category\":null,\"minPrice\":null,\"maxPrice\":50000,\"keywords\":[\"laptop\",\"gaming\"]}";
 
         try {
             Map<String, Object> requestBody = new HashMap<>();
