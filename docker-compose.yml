@@ -56,6 +56,7 @@ services:
       RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_placeholder}
       RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-placeholder_secret}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-YOUR_GEMINI_API_KEY}
+      ALLOWED_ORIGINS: "*"
     ports:
       - "8080:8080"
     healthcheck:
