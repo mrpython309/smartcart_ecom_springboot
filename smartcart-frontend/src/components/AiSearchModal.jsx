@@ -96,57 +96,60 @@ export default function AiSearchModal({ isOpen, onClose }) {
               <p className="text-purple-600 font-medium animate-pulse">AI is analyzing your request...</p>
             </div>
           ) : searched ? (
-            results.length > 0 ? (
-              <div className="space-y-3">
-                {aiMessage && (
-                  <div className="mb-6 p-4 bg-gradient-to-r from-purple-100 to-pink-50 rounded-2xl rounded-tl-sm border border-purple-200 flex items-start gap-3 shadow-sm animate-fade-in">
-                    <div className="p-2 bg-purple-500 rounded-full shrink-0">
-                      <Sparkles className="w-4 h-4 text-white" />
-                    </div>
-                    <p className="text-gray-800 text-sm leading-relaxed font-medium">
-                      {aiMessage}
-                    </p>
+            <div className="space-y-3">
+              {aiMessage && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-purple-100 to-pink-50 rounded-2xl rounded-tl-sm border border-purple-200 flex items-start gap-3 shadow-sm animate-fade-in">
+                  <div className="p-2 bg-purple-500 rounded-full shrink-0">
+                    <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                )}
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2">
-                  AI Curated Results
-                </h3>
-                {results.map((product) => (
-                  <div 
-                    key={product.id}
-                    onClick={() => handleProductClick(product.id)}
-                    className="flex items-center gap-4 p-3 rounded-xl hover:bg-purple-50 transition-colors cursor-pointer group border border-transparent hover:border-purple-100"
-                  >
-                    <img 
-                      src={product.imageUrl} 
-                      alt={product.name}
-                      className="w-16 h-16 object-cover rounded-lg bg-gray-100"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-gray-900 truncate group-hover:text-purple-700 transition-colors">
-                        {product.name}
-                      </h4>
-                      <p className="text-sm text-gray-500 truncate">{product.categoryName} • {product.brand}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-gray-900">${product.effectivePrice}</p>
-                      {product.discountPercentage > 0 && (
-                        <p className="text-xs text-red-500 line-through">${product.price}</p>
-                      )}
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-purple-500 transition-colors opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                  <Search className="w-8 h-8 text-gray-400" />
+                  <p className="text-gray-800 text-sm leading-relaxed font-medium">
+                    {aiMessage}
+                  </p>
                 </div>
-                <p className="text-gray-600 font-medium">No matches found.</p>
-                <p className="text-sm text-gray-400 mt-1">Try asking differently or adjusting your price limit.</p>
-              </div>
-            )
+              )}
+              
+              {results.length > 0 ? (
+                <>
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 px-2">
+                    AI Curated Results
+                  </h3>
+                  {results.map((product) => (
+                    <div 
+                      key={product.id}
+                      onClick={() => handleProductClick(product.id)}
+                      className="flex items-center gap-4 p-3 rounded-xl hover:bg-purple-50 transition-colors cursor-pointer group border border-transparent hover:border-purple-100"
+                    >
+                      <img 
+                        src={product.imageUrl} 
+                        alt={product.name}
+                        className="w-16 h-16 object-cover rounded-lg bg-gray-100"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900 truncate group-hover:text-purple-700 transition-colors">
+                          {product.name}
+                        </h4>
+                        <p className="text-sm text-gray-500 truncate">{product.categoryName} • {product.brand}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-gray-900">${product.effectivePrice}</p>
+                        {product.discountPercentage > 0 && (
+                          <p className="text-xs text-red-500 line-through">${product.price}</p>
+                        )}
+                      </div>
+                      <ArrowRight className="w-5 h-5 text-gray-300 group-hover:text-purple-500 transition-colors opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0" />
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                    <Search className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-600 font-medium">No matches found.</p>
+                  <p className="text-sm text-gray-400 mt-1">Try asking differently or adjusting your price limit.</p>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="text-center py-12">
               <div className="w-16 h-16 mx-auto bg-purple-50 rounded-full flex items-center justify-center mb-4">
