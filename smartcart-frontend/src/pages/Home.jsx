@@ -4,8 +4,10 @@ import { ArrowRight, ShoppingBag, Truck, Shield, Headphones, Star, Zap } from 'l
 import { productAPI, categoryAPI } from '../api/services';
 import ProductCard from '../components/ProductCard';
 import { ProductSkeleton } from '../components/Shared';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
+  const { user } = useAuth();
   const [featured, setFeatured] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -129,6 +131,7 @@ export default function Home() {
       </section>
 
       {/* CTA Banner */}
+      {!user && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="gradient-primary rounded-3xl p-10 md:p-16 text-white text-center relative overflow-hidden">
           <div className="absolute inset-0">
@@ -151,6 +154,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      )}
     </div>
   );
 }
